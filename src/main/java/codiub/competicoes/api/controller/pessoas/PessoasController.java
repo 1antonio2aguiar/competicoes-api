@@ -7,6 +7,7 @@ import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
 import codiub.competicoes.api.client.PessoaApiClient;
 import codiub.competicoes.api.entity.pessoas.Pessoas;
+import codiub.competicoes.api.entity.pessoas.pessoa.Pessoa;
 import codiub.competicoes.api.filter.pessoas.PessoaFilter;
 import codiub.competicoes.api.filter.pessoas.PessoasFilter;
 import codiub.competicoes.api.repository.pessoas.PessoasRepository;
@@ -38,10 +39,10 @@ public class PessoasController {
 
         // 1. O controller recebe a chamada externa.
         // 2. Ele usa o cliente Feign para chamar a outra API (pessoas-api).
-        ResponseEntity<List<DadosPessoasfjReduzRcd>> responseFromPessoasApi = pessoaApiClient.pesquisarPorNomeCpfCnpj(termo);
+        List<DadosPessoasfjReduzRcd> resultados = pessoaApiClient.pesquisarPorNomeCpfCnpj(termo);
 
         // 3. Ele retorna a resposta obtida para quem o chamou.
-        return responseFromPessoasApi;
+        return ResponseEntity.ok(resultados);
     }
 
     @GetMapping("/filtrarPessoas")
@@ -49,8 +50,6 @@ public class PessoasController {
             PessoaFilter filter, // O Spring ainda popula este objeto, o que é ótimo!
             Pageable pageable
     ) {
-
-        System.err.println("Filter " + filter);
 
         // Converter o objeto Sort para o formato de String[]
         String[] sortParams = pageable.getSort().stream()
@@ -84,6 +83,7 @@ public class PessoasController {
     }
 
 
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -106,13 +106,13 @@ public class PessoasController {
     public Page<DadosPessoasReduzidoRcd> pesquisarByPessoa(PessoasFilter filter, Pageable pageable) {
         return pessoasService.pessoaNotInEquipes(filter, pageable);
     }
-    @GetMapping("/{id}")
+    /*@GetMapping("/{id}")
     public ResponseEntity<DadosPessoasRcd> findById(@PathVariable Long id) {
         DadosPessoasRcd dadosPessoasRcd = pessoasService.findById(id);
         return dadosPessoasRcd != null
                 ? ResponseEntity.ok(dadosPessoasRcd)
                 : ResponseEntity.notFound().build();
-    }
+    }*/
 }
 
 

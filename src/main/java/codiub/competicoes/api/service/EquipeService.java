@@ -105,19 +105,8 @@ public class EquipeService {
         TiposModalidades modalidade = modalidadesRepository.findById(dados.modalidadeId()).get();
         equipe.setModalidade(modalidade);
 
-        //Busco a agremiacao
-        //Pessoas agremiacao = pessoasRepository.findById(dados.agremiacaoId()).get();
-        // equipe.setAgremiacao(agremiacao);
-
-        //Busco a tecnico
-        //Pessoas tecnico = pessoasRepository.findById(dados.tecnicoId()).get();
-        //equipe.setTecnico(tecnico);
-
-        //Busco a assistente tecnico
-        if(dados.assistenteTecnicoId() != null && dados.assistenteTecnicoId() != 0){
-            // Pessoas assistenteTecnico = pessoasRepository.findById(dados.assistenteTecnicoId()).get();
-            //equipe.setAssistenteTecnico(assistenteTecnico);
-        }
+        // Os IDs das pessoas (agremiacaoId, tecnicoId, etc.) já foram atualizados
+        // pelo BeanUtils. É só salvar.
 
         return equipeRepository.save(equipe);
     }
@@ -139,19 +128,9 @@ public class EquipeService {
         TiposModalidades modalidade = modalidadesRepository.findById(dados.modalidadeId()).get();
         equipeUpd.setModalidade(modalidade);
 
-        //Busco a agremiacao
-        // Pessoas agremiacao = pessoasRepository.findById(dados.agremiacaoId()).get();
-        //equipeUpd.setAgremiacao(agremiacao);
+        // Os IDs das pessoas (agremiacaoId, tecnicoId, etc.) já foram atualizados
+        // pelo BeanUtils. É só salvar.
 
-        //Busco a tecnico
-        //Pessoas tecnico = pessoasRepository.findById(dados.tecnicoId()).get();
-        //equipeUpd.setTecnico(tecnico);
-
-        //Busco a assistente tecnico
-         /*if(dados.assistenteTecnicoId() != null && dados.assistenteTecnicoId() != 0){
-             Pessoas assistenteTecnico = pessoasRepository.findById(dados.assistenteTecnicoId()).get();
-             equipeUpd.setAssistenteTecnico(assistenteTecnico);
-         }*/
         return equipeRepository.save(equipeUpd);
     }
 

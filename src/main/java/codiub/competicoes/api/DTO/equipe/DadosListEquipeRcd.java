@@ -56,4 +56,18 @@ public record DadosListEquipeRcd(
         );
     }
 
+    public static DadosListEquipeRcd fromEntityAndMap(Equipe equipe, Map<Long, DadosPessoasfjReduzRcd> pessoasMap) {
+        return new DadosListEquipeRcd(
+                equipe.getId(),
+                equipe.getEmpresa() != null ? equipe.getEmpresa().getNome() : null,
+                pessoasMap.get(equipe.getAgremiacaoId()),
+                equipe.getNome(),
+                equipe.getSigla(),
+                equipe.getModalidade() != null ? equipe.getModalidade().getId() : null,
+                equipe.getModalidade() != null ? equipe.getModalidade().getNome() : null,
+                pessoasMap.get(equipe.getTecnicoId()),
+                pessoasMap.get(equipe.getAssistenteTecnicoId())
+        );
+    }
+
 }

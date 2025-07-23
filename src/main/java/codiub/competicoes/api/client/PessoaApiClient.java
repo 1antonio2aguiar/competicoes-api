@@ -33,9 +33,8 @@ public interface PessoaApiClient {
     * PARA ESTE CASO ELE CHAMA pesquisarPorNomeCpfCnpj NO PessoasController
     * */
     @GetMapping("/pessoa")
-    public ResponseEntity<List<DadosPessoasfjReduzRcd>> pesquisarPorNomeCpfCnpj(@RequestParam("termo") String termo);
+    List<DadosPessoasfjReduzRcd> pesquisarPorNomeCpfCnpj(@RequestParam("termo") String termo);
 
-    //@GetMapping("/pessoas/filtrarPessoas")
     @GetMapping("/pessoa/filtrar")
     PageableResponse<DadosPessoasGeralRcd> filtrarPessoas(
             // Parâmetros do PessoaFilter desmembrados
