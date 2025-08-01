@@ -1,6 +1,7 @@
 package codiub.competicoes.api.entity;
 
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
+import codiub.competicoes.api.DTO.etapa.DadosInsertEtapaRcd;
+import codiub.competicoes.api.DTO.tipoModalidade.DadosModalidadeRcd;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,7 +41,7 @@ public class Etapa {
     @JoinColumn(name = "local_id")
     private LocaisCompeticoes localCompeticao;
 
-    public Etapa(DadosInsertTipoModalidadeRcd dados) {
+    public Etapa(DadosInsertEtapaRcd dados) {
         this.nome = dados.nome().toUpperCase();
         this.descricao = dados.descricao();
     }

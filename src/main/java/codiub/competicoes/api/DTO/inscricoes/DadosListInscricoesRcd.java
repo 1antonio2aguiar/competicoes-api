@@ -17,7 +17,7 @@ public record DadosListInscricoesRcd(
         String statusTipoInscricaoDescricao,
         String observacao,
         Long atletaId,
-        String atletaNome,
+        //String atletaNome,
         Long provaId,
         Integer distancia,
         String genero,
@@ -28,17 +28,17 @@ public record DadosListInscricoesRcd(
         String etapaNome,
         Long campeonatoId,
         String campeonatoNome,
-        String equipeNome,
-        DadosPessoasReduzidoRcd atleta
+        String equipeNome //,
+        //DadosPessoasReduzidoRcd atleta
 ) {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
 
     // Construtor "completo" (gerado pelo record)
     public DadosListInscricoesRcd(Long id, Integer baliza, Integer serie, Integer status,
       String statusDescricao, Integer statusTipoInscricao, String statusTipoInscricaoDescricao,
-      String observacao, Long atletaId, String atletaNome, Long provaId, Integer distancia,
+      String observacao, Long atletaId, /*String atletaNome,*/ Long provaId, Integer distancia,
       String genero, String revezamento, String medley, String tipoPiscina, Long etapaId,
-      String etapaNome, Long campeonatoId, String campeonatoNome, String equipeNome,DadosPessoasReduzidoRcd atleta) {
+      String etapaNome, Long campeonatoId, String campeonatoNome, String equipeNome/*,DadosPessoasReduzidoRcd atleta*/) {
         this.id = id;
         this.baliza = baliza;
         this.serie = serie;
@@ -48,7 +48,7 @@ public record DadosListInscricoesRcd(
         this.statusTipoInscricaoDescricao  = statusTipoInscricaoDescricao;
         this.observacao = observacao;
         this.atletaId = atletaId;
-        this.atletaNome = atletaNome;
+        //this.atletaNome = atletaNome;
         this.provaId = provaId;
         this.distancia = distancia;
         this.genero = genero;
@@ -60,7 +60,7 @@ public record DadosListInscricoesRcd(
         this.campeonatoId = campeonatoId;
         this.campeonatoNome = campeonatoNome;
         this.equipeNome = equipeNome;
-        this.atleta = atleta;
+        //this.atleta = atleta;
     }
 
 
@@ -84,7 +84,7 @@ public record DadosListInscricoesRcd(
                 inscricao.getTipoInscricao() != null ? inscricao.getTipoInscricao().getDescricao() : null,
                 inscricao.getObservacao(),
                 inscricao.getAtleta().getId(),
-                inscricao.getAtleta().getPessoa().getNome(),
+                //inscricao.getAtleta().getPessoa().getNome(),
                 inscricao.getProva().getId(),
                 inscricao.getProva().getDistancia(),
                 inscricao.getProva().getGenero(),
@@ -95,8 +95,9 @@ public record DadosListInscricoesRcd(
                 inscricao.getProva().getEtapa().getNome(),
                 inscricao.getProva().getEtapa().getCampeonato().getId(),
                 inscricao.getProva().getEtapa().getCampeonato().getNome(),
-                inscricao.getAtleta().getEquipe().getNome(),
+                inscricao.getAtleta().getEquipe().getNome() /*,
                 inscricao.getAtleta() != null ? codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd.fromPessoas(inscricao.getAtleta().getPessoa()) : null
+                */
         );
     }
 

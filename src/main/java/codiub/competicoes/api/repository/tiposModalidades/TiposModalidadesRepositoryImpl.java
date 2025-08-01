@@ -63,7 +63,7 @@ public class TiposModalidadesRepositoryImpl implements TiposModalidadesRepositor
 
         // NOME
         if (StringUtils.hasLength(tiposModalidadesFilter.getNome())) {
-            System.err.println("Paasou por aqui!  "+ tiposModalidadesFilter);
+            //System.err.println("Paasou por aqui!  "+ tiposModalidadesFilter);
             predicates.add(
                     builder.like(
                             builder.lower(root.get(TiposModalidades_.NOME)),

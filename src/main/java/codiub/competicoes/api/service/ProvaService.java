@@ -105,8 +105,6 @@ public class ProvaService {
         Categoria categoria = categoriaRepository.findById(dados.categoriaId()).get();
         provaUpd.setCategoria(categoria);
 
-        System.err.println("DADOS MILI: " + dados.indiceTecnico()+" "+ dados.record());
-
         dados.getIndiceTecnicoAsLong().ifPresent(provaUpd::setIndiceTecnico);
         dados.getRecordAsLong().ifPresent(provaUpd::setRecord);
 

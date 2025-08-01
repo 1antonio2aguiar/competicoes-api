@@ -123,7 +123,7 @@ public class ApuracaoCustonRepository {
                             (Long) tuple[2], // provaId
                             (String) tuple[3], // equipeNome
                             (Long) tuple[4], // atletaId
-                            (String) tuple[5], // atletaNome
+                            //(String) tuple[5], // atletaNome
                             (Integer) tuple[6], // serie
                             (Integer) tuple[7], // baliza
                             (Long) tuple[8], // resultado

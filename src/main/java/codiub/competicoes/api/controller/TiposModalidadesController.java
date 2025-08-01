@@ -1,12 +1,10 @@
 package codiub.competicoes.api.controller;
 
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
-import codiub.competicoes.api.DTO.tipoModalidade.DadosListTipoModalidadeRcd;
-import codiub.competicoes.api.DTO.tipoModalidade.DadosPageTipoModalidadeRcd;
-import codiub.competicoes.api.DTO.tipoModalidade.DadosUpdateTipoModalidadeRcd;
-import codiub.competicoes.api.entity.Etapa;
+import codiub.competicoes.api.DTO.provas.DadosListProvasRcd;
+import codiub.competicoes.api.DTO.tipoModalidade.DadosListModalidadesRcd;
+import codiub.competicoes.api.DTO.tipoModalidade.DadosModalidadeRcd;
 import codiub.competicoes.api.entity.TiposModalidades;
-import codiub.competicoes.api.filter.EtapaFilter;
+import codiub.competicoes.api.filter.ProvaFilter;
 import codiub.competicoes.api.filter.TiposModalidadesFilter;
 import codiub.competicoes.api.repository.TiposModalidadesRepository;
 import codiub.competicoes.api.service.TiposModalidadesService;
@@ -32,48 +30,29 @@ public class TiposModalidadesController {
 
     // Listar tipos modalidade
     @GetMapping
-    public Page<DadosPageTipoModalidadeRcd> findall(@PageableDefault (sort={"nome"}) Pageable paginacao){
-        return tiposModalidadesRepository.findAll(paginacao).map(DadosPageTipoModalidadeRcd::new);
+    public Page<DadosListModalidadesRcd> findall(@PageableDefault(sort = {"id"}) Pageable paginacao) {
+        return tiposModalidadesService.findall(paginacao);
     }
-
-    /*@GetMapping
-    public Page<Etapa> findall(@PageableDefault (sort={"nome"}) EtapaFilter etapaFilter, Pageable paginacao){
-        //return etapasRepository.findAll(paginacao).map(DadosListEtapaRcd::new);
-        //long id = 6;
-        //etapaFilter.getCampeonatoFilter().setId(id);
-        System.err.println("Celine Dion ");
-        return etapasRepository.filtrar(etapaFilter, paginacao);
-    }*/
 
     // Lista de tipo modalidades com Paginacao e filter
     @GetMapping("/filter")
-    public Page<TiposModalidades> pesquisar(TiposModalidadesFilter filter, Pageable pageable) {
-        System.err.println("TiposModalidadesFilter " + filter );
-        return tiposModalidadesRepository.filtrar(filter, pageable);
+    public Page<DadosListModalidadesRcd> pesquisar(TiposModalidadesFilter filter, Pageable pageable) {
+        //System.err.println("TiposModalidadesFilter " + filter );
+        return tiposModalidadesService.pesquisar(filter, pageable);
     }
 
-    @GetMapping("/list")
-    public List<TiposModalidades> pesquisar(TiposModalidadesFilter filter ) {
-        return tiposModalidadesRepository.filtrar(filter);
+    @GetMapping("/{id}")
+    public ResponseEntity<DadosListModalidadesRcd> findById(@PathVariable Long id) {
+        DadosListModalidadesRcd dados = tiposModalidadesService.findById(id);
+        return dados != null
+                ? ResponseEntity.ok(dados)
+                : ResponseEntity.notFound().build();
     }
-
-    @GetMapping(value = "/{id}")
-    public ResponseEntity findById(@PathVariable Long id){
-        TiposModalidades tiposModalidades = tiposModalidadesService.findById(id);
-        return ResponseEntity.ok().body(new DadosListTipoModalidadeRcd(tiposModalidades));
-    }
-
-    // Exemplo
-    /*public ResponseEntity<List<Fabricante>> findall(){
-        List<Fabricante> listFabricante = fabricanteService.findAll();
-        return ResponseEntity.ok().body(listFabricante);
-    }*/
-
 
     // Inserir
     @PostMapping
     @Transactional
-    public ResponseEntity insert(@RequestBody @Valid DadosInsertTipoModalidadeRcd dados){
+    public ResponseEntity insert(@RequestBody @Valid DadosModalidadeRcd dados){
         var tiposModalidadesSalva = tiposModalidadesService.insert(dados);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/id")
                 .buildAndExpand(tiposModalidadesSalva.getId()).toUri();
@@ -83,9 +62,9 @@ public class TiposModalidadesController {
     // ALTERAR
     @Transactional
     @PutMapping(value = "/{id}")
-    public ResponseEntity update(@PathVariable @Valid Long id, @RequestBody DadosUpdateTipoModalidadeRcd dados){
+    public ResponseEntity update(@PathVariable @Valid Long id, @RequestBody DadosModalidadeRcd dados){
         var salva = tiposModalidadesService.update(id, dados);
-        return ResponseEntity.ok().body(new DadosListTipoModalidadeRcd(salva));
+        return ResponseEntity.ok().body( DadosListModalidadesRcd.fromTiposModalidades(salva));
     }
 
     // DELETAR

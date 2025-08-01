@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface InscricaoRepository extends JpaRepository<Inscricoes, Long>, InscricaoRepositoryQuery {
 
@@ -21,4 +22,5 @@ public interface InscricaoRepository extends JpaRepository<Inscricoes, Long>, In
     @Modifying
     @Query(value = "UPDATE inscricoes SET status = :#{#status.ordinal()} WHERE id = :inscricaoId", nativeQuery = true)
     int updateStatusById(@Param("inscricaoId") Long inscricaoId, @Param("status") StatusInscricao status);
+
 }

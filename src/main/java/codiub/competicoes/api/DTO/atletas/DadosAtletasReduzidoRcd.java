@@ -11,10 +11,5 @@ public record DadosAtletasReduzidoRcd(
         String equipeNome
 
 ) {
-    public static DadosAtletasReduzidoRcd fromAtletas(Atleta dados) {
-        return new DadosAtletasReduzidoRcd(
-                dados.getId(),
-                dados.getPessoa().getNome(),
-                dados.getEquipe().getNome());
-    }
+
 }

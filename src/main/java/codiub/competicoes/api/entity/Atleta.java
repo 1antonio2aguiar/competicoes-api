@@ -1,11 +1,8 @@
 package codiub.competicoes.api.entity;
 
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
 import codiub.competicoes.api.entity.pessoas.Pessoas;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
 
 @EqualsAndHashCode(of = "id")
 @Entity(name = "Atleta")
@@ -24,13 +21,12 @@ public class Atleta {
     private Long id;
     private String observacao;
 
+    @Column(name = "pessoa_id")
+    private Long pessoaId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pessoa_id")
-    private Pessoas pessoa;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "equipe_id")

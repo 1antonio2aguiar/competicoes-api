@@ -4,19 +4,14 @@ import codiub.competicoes.api.DTO.atletas.DadosAtletasReduzidoRcd;
 import codiub.competicoes.api.DTO.atletas.DadosInsertAtletasRcd;
 import codiub.competicoes.api.DTO.atletas.DadosListAtletasRcd;
 import codiub.competicoes.api.DTO.atletas.DadosUpdateAtletaRcd;
-import codiub.competicoes.api.DTO.equipe.DadosInsertEquipeRcd;
-import codiub.competicoes.api.DTO.equipe.DadosListEquipeRcd;
-import codiub.competicoes.api.DTO.equipe.DadosUpdateEquipeRcd;
 import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
 import codiub.competicoes.api.entity.Atleta;
-import codiub.competicoes.api.entity.Equipe;
 import codiub.competicoes.api.filter.AtletaFilter;
-import codiub.competicoes.api.filter.EquipeFilter;
+import codiub.competicoes.api.filter.pessoas.PessoaFilter;
+import codiub.competicoes.api.filter.pessoas.PessoaFisicaFilter;
 import codiub.competicoes.api.filter.pessoas.PessoasFilter;
 import codiub.competicoes.api.repository.AtletaRepository;
-import codiub.competicoes.api.repository.EquipeRepository;
 import codiub.competicoes.api.service.AtletaService;
-import codiub.competicoes.api.service.EquipeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,20 +33,16 @@ public class AtletaController {
     @Autowired
     private AtletaService atletaService;
 
-    // Listar atletas
-    @GetMapping
-    public Page<DadosListAtletasRcd> findall(@PageableDefault(sort = {"nome"}) Pageable paginacao) {
-        return atletaService.findall(paginacao);
+    @GetMapping("/disponiveis-para-cadastro")
+    public Page<DadosPessoasReduzidoRcd> pesquisarPessoasDisponiveis(
+            PessoaFisicaFilter filter, // Use o filter adequado
+            Pageable pageable
+    ) {
+        return atletaService.pesquisarPessoasDisponiveisParaAtleta(filter, pageable);
     }
-
-    @GetMapping("/list")
-    public List<Atleta> pesquisar(AtletaFilter filter ) {
-        return atletaRepository.filtrar(filter);
-    }
-
     @GetMapping("/filter")
-    public Page<DadosListAtletasRcd> pesquisar(AtletaFilter filter, Pageable pageable) {
-        return atletaService.pesquisar(filter, pageable);
+        public Page<DadosListAtletasRcd> pesquisar(AtletaFilter filter, Pageable pageable) {
+            return atletaService.pesquisar(filter, pageable);
     }
 
     @GetMapping("/{id}")
@@ -62,18 +53,12 @@ public class AtletaController {
                 : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/atletaNotInInscricoes")
-    public Page<DadosAtletasReduzidoRcd> pesquisarByAtleta(AtletaFilter filter, Pageable pageable) {
-        System.err.println("PARAMETRO " + filter);
-        return atletaService.atletaNotInInscricoes(filter, pageable);
-    }
-
     // ALTERAR
     @Transactional
     @PutMapping(value = "/{id}")
     public ResponseEntity update(@PathVariable @Valid Long id, @RequestBody DadosUpdateAtletaRcd dados){
         var salva = atletaService.update(id, dados);
-        return ResponseEntity.ok().body(DadosListAtletasRcd.fromAtleta(salva));
+        return ResponseEntity.ok().body(DadosListAtletasRcd.fromAtleta(salva,null));
     }
 
     //INSERT
@@ -83,7 +68,7 @@ public class AtletaController {
         var atletaSalva = atletaService.insert(dados);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/id")
                 .buildAndExpand(atletaSalva.getId()).toUri();
-        return ResponseEntity.created(uri).body(DadosListAtletasRcd.fromAtleta(atletaSalva));
+        return ResponseEntity.created(uri).body(DadosListAtletasRcd.fromAtleta(atletaSalva, null));
     }
 
     // DELETAR

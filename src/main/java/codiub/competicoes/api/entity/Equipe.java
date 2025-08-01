@@ -1,7 +1,7 @@
 package codiub.competicoes.api.entity;
 
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
-import codiub.competicoes.api.entity.pessoas.Pessoas;
+import codiub.competicoes.api.DTO.equipe.DadosInsertEquipeRcd;
+import codiub.competicoes.api.DTO.tipoModalidade.DadosModalidadeRcd;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,9 +42,8 @@ public class Equipe {
     @Column(name = "assistente_tecnico_id")
     private Long assistenteTecnicoId;
 
-    public Equipe(DadosInsertTipoModalidadeRcd dados) {
+    public Equipe(DadosInsertEquipeRcd dados) {
         this.nome = dados.nome().toUpperCase();
-        this.sigla = dados.descricao();
     }
     public Equipe(Equipe tipoModalidadeSalva) {
     }

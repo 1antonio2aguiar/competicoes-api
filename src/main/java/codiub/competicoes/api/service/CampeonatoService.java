@@ -2,8 +2,6 @@ package codiub.competicoes.api.service;
 
 import codiub.competicoes.api.DTO.campeonato.DadosInsertCampeonatoRcd;
 import codiub.competicoes.api.DTO.campeonato.DadosUpdateCampeonatoRcd;
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
-import codiub.competicoes.api.DTO.tipoModalidade.DadosUpdateTipoModalidadeRcd;
 import codiub.competicoes.api.entity.Campeonato;
 import codiub.competicoes.api.entity.Empresa;
 import codiub.competicoes.api.entity.TiposModalidades;

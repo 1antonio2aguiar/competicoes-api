@@ -8,6 +8,8 @@ import java.sql.Date;
 public class PessoasFilter {
     private Long id;
     private String nome;
+    private String cpf;
+    private Date dataNascimento;
 
     private DadosPessoaFisicaFilter dadosPessoaFisicaFilter = new DadosPessoaFisicaFilter();
 

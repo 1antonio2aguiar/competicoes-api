@@ -10,18 +10,22 @@ import codiub.competicoes.api.entity.pessoas.Pessoas;
 import codiub.competicoes.api.entity.pessoas.pessoa.Pessoa;
 import codiub.competicoes.api.filter.pessoas.PessoaFilter;
 import codiub.competicoes.api.filter.pessoas.PessoasFilter;
+import codiub.competicoes.api.repository.InscricaoRepository;
 import codiub.competicoes.api.repository.pessoas.PessoasRepository;
 import codiub.competicoes.api.service.pessoas.PessoasService;
 import codiub.competicoes.api.utils.PageableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -30,6 +34,7 @@ public class PessoasController {
     private PessoasRepository pessoasRepository;
     @Autowired
     private PessoasService pessoasService;
+    @Autowired private InscricaoRepository inscricaoRepository;
     @Autowired
     PessoaApiClient pessoaApiClient;
 
@@ -82,8 +87,6 @@ public class PessoasController {
         return ResponseEntity.ok(resultados);
     }
 
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -106,13 +109,7 @@ public class PessoasController {
     public Page<DadosPessoasReduzidoRcd> pesquisarByPessoa(PessoasFilter filter, Pageable pageable) {
         return pessoasService.pessoaNotInEquipes(filter, pageable);
     }
-    /*@GetMapping("/{id}")
-    public ResponseEntity<DadosPessoasRcd> findById(@PathVariable Long id) {
-        DadosPessoasRcd dadosPessoasRcd = pessoasService.findById(id);
-        return dadosPessoasRcd != null
-                ? ResponseEntity.ok(dadosPessoasRcd)
-                : ResponseEntity.notFound().build();
-    }*/
+
 }
 
 

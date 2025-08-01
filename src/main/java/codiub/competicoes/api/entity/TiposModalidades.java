@@ -1,6 +1,5 @@
 package codiub.competicoes.api.entity;
 
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,14 +20,6 @@ public class TiposModalidades {
     private Long id;
     private String nome;
     private String descricao;
-
-    public TiposModalidades(DadosInsertTipoModalidadeRcd dados) {
-        this.nome = dados.nome().toUpperCase();
-        this.descricao = dados.descricao();
-    }
-
-    public TiposModalidades(TiposModalidades tipoModalidadeSalva) {
-    }
 
 }
 

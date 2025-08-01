@@ -1,7 +1,6 @@
 package codiub.competicoes.api.entity;
 
 import codiub.competicoes.api.DTO.categoria.DadosCategoriaRcd;
-import codiub.competicoes.api.DTO.tipoModalidade.DadosInsertTipoModalidadeRcd;
 import jakarta.persistence.*;
 import lombok.*;
 

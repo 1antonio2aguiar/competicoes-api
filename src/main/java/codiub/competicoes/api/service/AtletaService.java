@@ -1,18 +1,14 @@
 package codiub.competicoes.api.service;
 
-import codiub.competicoes.api.DTO.atletas.DadosAtletasReduzidoRcd;
 import codiub.competicoes.api.DTO.atletas.DadosInsertAtletasRcd;
 import codiub.competicoes.api.DTO.atletas.DadosListAtletasRcd;
 import codiub.competicoes.api.DTO.atletas.DadosUpdateAtletaRcd;
-import codiub.competicoes.api.DTO.equipe.DadosInsertEquipeRcd;
-import codiub.competicoes.api.DTO.equipe.DadosListEquipeRcd;
-import codiub.competicoes.api.DTO.equipe.DadosUpdateEquipeRcd;
 import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
+import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
+import codiub.competicoes.api.client.PessoaApiClient;
 import codiub.competicoes.api.entity.*;
-import codiub.competicoes.api.entity.pessoas.Pessoas;
 import codiub.competicoes.api.filter.AtletaFilter;
-import codiub.competicoes.api.filter.EquipeFilter;
-import codiub.competicoes.api.filter.pessoas.PessoasFilter;
+import codiub.competicoes.api.filter.pessoas.PessoaFisicaFilter;
 import codiub.competicoes.api.repository.*;
 import codiub.competicoes.api.repository.atleta.custon.AtletaCustonRepository;
 import codiub.competicoes.api.repository.pessoas.PessoasRepository;
@@ -27,9 +23,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,50 +39,115 @@ public class AtletaService {
     @Autowired private CategoriaRepository categoriaRepository;
     @Autowired private AtletaCustonRepository atletaCustonRepository;
 
-    public AtletaService(AtletaRepository atletaRepository) {
+    @Autowired
+    private PessoaApiClient pessoaApiClient;
+
+    public AtletaService(AtletaRepository atletaRepository, PessoaApiClient pessoaApiClient) {
         this.atletaRepository = atletaRepository;
+        this.pessoaApiClient = pessoaApiClient;
     }
 
-    //Metodo filtrar
+    @Transactional(readOnly = true)
+    public Page<DadosPessoasReduzidoRcd> pesquisarPessoasDisponiveisParaAtleta(PessoaFisicaFilter filter, Pageable pageable) {
+        String dataNascStr = null;
+        if (filter.getDataNascimento() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            dataNascStr = sdf.format(filter.getDataNascimento());
+        }
+
+        // 1. A chamada fica limpa e direta
+        Page<DadosPessoasReduzidoRcd> responseDaApi = pessoaApiClient.filtrarPessoasFisica(
+                filter.getId(),
+                filter.getNome(),
+                filter.getCpf(),
+                dataNascStr,
+                pageable
+        );
+
+        // 2. O restante do código funciona exatamente como antes
+        List<DadosPessoasReduzidoRcd> candidatos = responseDaApi.getContent();
+        if (candidatos.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Long> candidatoIds = candidatos.stream().map(DadosPessoasReduzidoRcd::id).collect(Collectors.toList());
+        List<Long> idsJaCadastrados = atletaRepository.findPessoaIdsCadastradosComoAtletas(candidatoIds);
+        List<DadosPessoasReduzidoRcd> pessoasDisponiveis = candidatos.stream()
+                .filter(candidato -> !idsJaCadastrados.contains(candidato.id()))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(pessoasDisponiveis, pageable, responseDaApi.getTotalElements());
+    }
+
+    // O método de cima traz pessoas fisica e juridia
+    //Metodo filtrar Aqui pega os dados do atleta(pessoa_id) em pessoas-api
     @Transactional(readOnly = true)
     public Page<DadosListAtletasRcd> pesquisar(AtletaFilter filter, Pageable pageable) {
-        Page<Atleta> atletaPage = atletaRepository.filtrar(filter, pageable);
+        Set<Long> idsDePessoasFiltradasPorNome = null;
 
-        // Mapeia a lista de atletas para uma lista de DadosListAtletasRcd usando o método de fábrica
-        List<DadosListAtletasRcd> atletaDTOList = atletaPage.getContent().stream()
-                .map(DadosListAtletasRcd::fromAtleta)
-                .collect(Collectors.toList());
+        // ETAPA 1: Se um nome de pessoa foi fornecido, busca os IDs correspondentes na API de Pessoas.
+        if (StringUtils.hasText(filter.getPessoaNome())) {
 
-        // Cria um novo Page<DadosListAtletasRcd> com os dados mapeados
-        return new PageImpl<>(atletaDTOList, pageable, atletaPage.getTotalElements());
+            // Busca todas as pessoas correspondentes, sem paginação, para garantir um filtro completo.
+            Page<DadosPessoasReduzidoRcd> paginaPessoas = pessoaApiClient.filtrarPessoasFisica(
+                    null,
+                    filter.getPessoaNome(),
+                    null,
+                    null,
+                    Pageable.unpaged()
+            );
+
+            List<DadosPessoasReduzidoRcd> pessoasEncontradas = paginaPessoas.getContent();
+
+            // Se nenhuma pessoa for encontrada na API externa, não haverá atletas para buscar.
+            if (pessoasEncontradas.isEmpty()) {
+                return Page.empty(pageable);
+            }
+
+            // Coleta os IDs para usar na consulta ao banco de dados local.
+            idsDePessoasFiltradasPorNome = pessoasEncontradas.stream()
+                    .map(DadosPessoasReduzidoRcd::id)
+                    .collect(Collectors.toSet());
+        }
+
+        // ETAPA 2: Busca os atletas no banco de dados local, usando os filtros e os IDs de pessoa (se aplicável).
+        Page<Atleta> atletaPage = atletaRepository.filtrarComPessoaIds(filter, idsDePessoasFiltradasPorNome, pageable);
+
+        // Se a busca local por atletas não retornar resultados, encerra o processo.
+        if (atletaPage.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        // ETAPA 3: Enriquece os dados dos atletas encontrados com informações da API de Pessoas.
+        List<Atleta> atletasNaPagina = atletaPage.getContent();
+        Set<Long> pessoaIdsParaEnriquecer = atletasNaPagina.stream()
+                .map(Atleta::getPessoaId)
+                .collect(Collectors.toSet());
+
+        List<DadosPessoasReduzidoRcd> pessoasDtos = pessoaApiClient.findPessoasFisicaByIds(pessoaIdsParaEnriquecer);
+
+        // Mapeia os dados das pessoas por ID para facilitar a combinação.
+        Map<Long, DadosPessoasReduzidoRcd> pessoasMap = pessoasDtos.stream()
+                .collect(Collectors.toMap(DadosPessoasReduzidoRcd::id, Function.identity()));
+
+        // Converte as entidades 'Atleta' para o DTO de resposta, combinando com os dados das pessoas.
+        List<DadosListAtletasRcd> dtoList = DadosListAtletasRcd.fromEntities(atletasNaPagina, pessoasMap);
+
+        // Retorna a página final com o DTO de resposta e as informações de paginação corretas.
+        return new PageImpl<>(dtoList, pageable, atletaPage.getTotalElements());
     }
-    @Transactional(readOnly = true)
-    public Page<DadosAtletasReduzidoRcd> atletaNotInInscricoes(AtletaFilter filter, Pageable pageable) {
-        // Recupera somente atletas que não pertecem a nenhuma inscricao.
-        Page<Atleta> atletaPage = atletaCustonRepository.atletaNotInInscricoes(filter, pageable);
 
-        // Mapeia a lista de atletas para uma lista de DadosAtletasReduzidoRcd usando o método de fábrica
-        List<DadosAtletasReduzidoRcd> atletasDTOList = atletaPage.getContent().stream()
-                .map(DadosAtletasReduzidoRcd::fromAtletas)
-                .collect(Collectors.toList());
-
-        // Cria um novo Page<DadosAtletasRcd> com os dados mapeados
-        return new PageImpl<>(atletasDTOList, pageable, atletaPage.getTotalElements());
-    }
 
     // Atleta por id
     @Transactional(readOnly = true)
     public DadosListAtletasRcd findById(Long id) {
-        Optional<Atleta> atletaOptional = atletaRepository.findById(id);
-        return atletaOptional.map(DadosListAtletasRcd::fromAtleta).orElse(null);
-    }
-    @Transactional(readOnly = true)
-    public Page<DadosListAtletasRcd> findall(Pageable paginacao) {
-        Page<Atleta> atletaPage = atletaRepository.findAll(paginacao);
-        List<DadosListAtletasRcd> atletaDTOList = atletaPage.getContent().stream()
-                .map(DadosListAtletasRcd::fromAtleta) // Usa o método de fábrica
-                .collect(Collectors.toList());
-        return new PageImpl<>(atletaDTOList, paginacao, atletaPage.getTotalElements());
+        Atleta atleta = atletaRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Atleta não encontrado. Id: " + id));
+
+        Long pessoaId = atleta.getPessoaId();
+        List<DadosPessoasReduzidoRcd> pessoaDtoList = pessoaApiClient.findPessoasFisicaByIds(Collections.singleton(pessoaId));
+        DadosPessoasReduzidoRcd pessoaDto = pessoaDtoList.stream().findFirst().orElse(null);
+        return DadosListAtletasRcd.fromAtleta(atleta, pessoaDto);
     }
 
     //Insert
@@ -98,10 +161,6 @@ public class AtletaService {
             Empresa empresa = empresaRepository.findById(dados.empresaId()).get();
             atleta.setEmpresa(empresa);
         }
-
-        //Busco a atleta
-        Pessoas pessoa = pessoasRepository.findById(dados.pessoaId()).get();
-        atleta.setPessoa(pessoa);
 
         //Busco a equipe
         Equipe equipe = equipeRepository.findById(dados.equipeId()).get();
