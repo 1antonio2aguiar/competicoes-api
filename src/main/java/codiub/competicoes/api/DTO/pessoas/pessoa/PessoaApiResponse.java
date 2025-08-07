@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public record PessoaApiResponse( // Renomeado para clareza
          Long id,
          String nome,
-         //String fisicaJuridica, // "F"
+         String fisicaJuridica,
          String situacao, // Descrição do Enum
          Long tipoPessoaId,
          String tipoPessoaNome,

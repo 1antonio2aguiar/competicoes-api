@@ -6,7 +6,8 @@ public record DadosPessoasGeralRcd(
         // Campos Comuns (da entidade Pessoa)
         Long id,
         String nome,
-        //String fisicaJuridica, // "F" ou "J"
+        String fisicaJuridica, // "F" ou "J"
+        Integer situacaoId,
         String situacao,       // Descrição do Enum
         Long tipoPessoaId,
         String tipoPessoaNome,
@@ -15,6 +16,7 @@ public record DadosPessoasGeralRcd(
         // Campos Específicos de Pessoa Física (podem ser null se for Pessoa Jurídica)
         String cpf,
         String sexo,
+        Integer estadoCivilId,
         String estadoCivil,
         LocalDate dataNascimento,
         String nomeMae,

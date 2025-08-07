@@ -3,8 +3,10 @@ package codiub.competicoes.api.controller;
 import codiub.competicoes.api.DTO.provas.DadosListProvasRcd;
 import codiub.competicoes.api.DTO.tipoModalidade.DadosListModalidadesRcd;
 import codiub.competicoes.api.DTO.tipoModalidade.DadosModalidadeRcd;
+import codiub.competicoes.api.entity.TipoNado;
 import codiub.competicoes.api.entity.TiposModalidades;
 import codiub.competicoes.api.filter.ProvaFilter;
+import codiub.competicoes.api.filter.TipoNadoFilter;
 import codiub.competicoes.api.filter.TiposModalidadesFilter;
 import codiub.competicoes.api.repository.TiposModalidadesRepository;
 import codiub.competicoes.api.service.TiposModalidadesService;
@@ -39,6 +41,11 @@ public class TiposModalidadesController {
     public Page<DadosListModalidadesRcd> pesquisar(TiposModalidadesFilter filter, Pageable pageable) {
         //System.err.println("TiposModalidadesFilter " + filter );
         return tiposModalidadesService.pesquisar(filter, pageable);
+    }
+
+    @GetMapping("/list")
+    public List<TiposModalidades> pesquisar(TiposModalidadesFilter filter ) {
+        return tiposModalidadesRepository.filtrar(filter);
     }
 
     @GetMapping("/{id}")

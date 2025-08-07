@@ -7,6 +7,7 @@ import codiub.competicoes.api.utils.PageableResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,9 @@ public interface PessoaApiClient {
     // ESTA BUSCA É MISTA BUSCA EM EQUIPES E DE EQUIPES BUSCA AS PESSOAS NA PESSOAS-API
     @GetMapping("/pessoa/{id}") // Corresponde ao endpoint na pessoas-api
     DadosPessoasfjReduzRcd findPessoaById(@PathVariable("id") Long id);
+
+    @GetMapping("/pessoa/{id}/completo") // << Novo caminho para diferenciar
+    DadosPessoasGeralRcd findPessoaCompletaById(@PathVariable("id") Long id);
 
     /*
         ESTA TAMBÉM É MISTA BUSCA EM EQUIPES E DE EQUIPES BUSCA AS PESSOAS NA PESSOAS-API, SÓ QUE TRAZ UMA LISTA DE PESSOAS
@@ -40,8 +44,11 @@ public interface PessoaApiClient {
     /* ESTA BUSCA É DIRETO NA PESSOAS-API (PRECISA TER UM END POINT NO CONTROLLER
     * PARA ESTE CASO ELE CHAMA pesquisarPorNomeCpfCnpj NO PessoasController
     * */
-    @GetMapping("/pessoa")
-    List<DadosPessoasfjReduzRcd> pesquisarPorNomeCpfCnpj(@RequestParam("termo") String termo);
+    @GetMapping("/pessoa/pesquisar") // <<< Caminho para o endpoint unificado
+    ResponseEntity<List<?>> pesquisarPorTermo(
+            @RequestParam("termo") String termo,
+            @RequestParam(value = "completo", required = false) Boolean completo
+    );
 
     @GetMapping("/pessoa/filtrar")
     PageableResponse<DadosPessoasGeralRcd> filtrarPessoas(

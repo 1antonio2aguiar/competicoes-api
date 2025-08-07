@@ -12,6 +12,7 @@ public record DadosInsertPessoaFisicaRcd(
         @NotBlank(message = "Nome é obrigatório")
         @Size(max = 200, message = "Nome deve ter no máximo 200 caracteres")
         String nome,
+        String fisicaJuridica,
 
         // fisicaJuridica será 'F', definido pelo tipo de DTO/endpoint
 

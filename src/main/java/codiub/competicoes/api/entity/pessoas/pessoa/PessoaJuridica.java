@@ -40,7 +40,7 @@ public class PessoaJuridica extends Pessoa {
     public PessoaJuridica(String nome, String observacao, Situacao situacao, TiposPessoas tiposPessoas,
                           String cnpj, String nomeFantasia, String objetoSocial,
                           String microEmpresa, Integer tipoEmpresa) {
-        super(nome, observacao, situacao, tiposPessoas); // Chama o construtor da classe pai
+        super(nome, /*fisicaJuridica,*/ observacao, situacao, tiposPessoas); // Chama o construtor da classe pai
         this.cnpj = cnpj;
         this.nomeFantasia = nomeFantasia;
         this.objetoSocial = objetoSocial;

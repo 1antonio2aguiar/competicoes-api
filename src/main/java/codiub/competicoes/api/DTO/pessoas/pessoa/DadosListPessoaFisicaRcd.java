@@ -10,7 +10,7 @@ import java.util.Optional;
 public record DadosListPessoaFisicaRcd(
         Long id,
         String nome,
-        //String fisicaJuridica, // "F"
+        String fisicaJuridica, // "F"
         String situacao, // Descrição do Enum
         Long tipoPessoaId,
         String tipoPessoaNome,
@@ -34,7 +34,7 @@ public record DadosListPessoaFisicaRcd(
         return new DadosListPessoaFisicaRcd(
                 pf.getId(),
                 pf.getNome(),
-                //pf.getFisicaJuridica(),
+    "F",
                 pf.getSituacao() != null ? pf.getSituacao().getDescricao() : null,
                 pf.getTiposPessoas().getId(),
                 pf.getTiposPessoas().getNome(),

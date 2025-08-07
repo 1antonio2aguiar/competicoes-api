@@ -76,6 +76,7 @@ public class PessoaFisicaService {
         return new DadosListPessoaFisicaRcd(
                 pessoaDaApi.id(),
                 pessoaDaApi.nome(),
+                pessoaDaApi.fisicaJuridica(),
                 pessoaDaApi.situacao(),
                 pessoaDaApi.tipoPessoaId(),
                 pessoaDaApi.tipoPessoaNome(),
@@ -96,6 +97,7 @@ public class PessoaFisicaService {
         // 1. Mapear o DTO de entrada do seu controller para o DTO de requisição da API de Pessoas
         PessoaApiRequest dadosParaApi = new PessoaApiRequest(
                 dadosEntradaController.nome(),
+                dadosEntradaController.fisicaJuridica(),
                 dadosEntradaController.observacao(),
                 dadosEntradaController.situacao(),
                 dadosEntradaController.tipoPessoaId(),
@@ -117,6 +119,7 @@ public class PessoaFisicaService {
         return new DadosListPessoaFisicaRcd(
                 pessoaSalvaRemotamente.id(),
                 pessoaSalvaRemotamente.nome(),
+                pessoaSalvaRemotamente.fisicaJuridica(),
                 pessoaSalvaRemotamente.situacao(),
                 pessoaSalvaRemotamente.tipoPessoaId(),
                 pessoaSalvaRemotamente.tipoPessoaNome(),

@@ -53,6 +53,7 @@ public class PessoaRemoteClientService {
     }
 
     public PessoaApiResponse buscarPessoaFisicaPorId(Long id) {
+        //System.err.println("É AQUI QUE ESTA VINDO>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         try {
             String url = pessoasApiBaseUrl + "/" + id;
             ResponseEntity<PessoaApiResponse> response = restTemplate.getForEntity(url, PessoaApiResponse.class); // << Resposta usa DTO

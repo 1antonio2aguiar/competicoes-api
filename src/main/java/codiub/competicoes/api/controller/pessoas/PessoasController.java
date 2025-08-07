@@ -1,6 +1,7 @@
 package codiub.competicoes.api.controller.pessoas;
 
 import codiub.competicoes.api.DTO.campeonato.DadosListCampeonatoRcd;
+import codiub.competicoes.api.DTO.equipe.DadosListEquipeRcd;
 import codiub.competicoes.api.DTO.pessoas.DadosPessoasRcd;
 import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
@@ -38,18 +39,36 @@ public class PessoasController {
     @Autowired
     PessoaApiClient pessoaApiClient;
 
-    @GetMapping("/pesquisarPorNomeCpfCnpj")  // ESTE JÁ É DOS NOVOS PEGANDO DA PESSOAS-API
-    public ResponseEntity<List<DadosPessoasfjReduzRcd>> pesquisarPessoas(
-            @RequestParam("termo") String termo) {
-
-        // 1. O controller recebe a chamada externa.
-        // 2. Ele usa o cliente Feign para chamar a outra API (pessoas-api).
-        List<DadosPessoasfjReduzRcd> resultados = pessoaApiClient.pesquisarPorNomeCpfCnpj(termo);
-
-        // 3. Ele retorna a resposta obtida para quem o chamou.
-        return ResponseEntity.ok(resultados);
+    @GetMapping("/{id}")
+    public ResponseEntity<DadosPessoasfjReduzRcd> buscarPessoaPorId(@PathVariable Long id) {
+        DadosPessoasfjReduzRcd pessoaEncontrada = pessoaApiClient.findPessoaById(id);
+        return ResponseEntity.ok(pessoaEncontrada);
     }
 
+    // **** NOVO ENDPOINT PARA BUSCA COMPLETA POR ID ****
+    /**
+     * Endpoint para buscar os dados completos de uma única pessoa pelo seu ID.
+     * URL de acesso: GET http://localhost:8080/pessoas/{id}/completo
+     */
+    @GetMapping("/{id}/completo")
+    public ResponseEntity<DadosPessoasGeralRcd> buscarPessoaCompletaPorId(@PathVariable Long id) {
+        DadosPessoasGeralRcd pessoaEncontrada = pessoaApiClient.findPessoaCompletaById(id);
+        return ResponseEntity.ok(pessoaEncontrada);
+    }
+
+    @GetMapping("/pesquisar") // << Um endpoint único e claro
+    public ResponseEntity<?> pesquisarPessoasPorTermo(
+            @RequestParam("termo") String termo,
+            @RequestParam(value = "completo", required = false, defaultValue = "false") boolean completo
+    ) {
+        // Chama o método unificado do Feign Client, passando o parâmetro 'completo'
+        ResponseEntity<List<?>> response = pessoaApiClient.pesquisarPorTermo(termo, completo);
+
+        // Simplesmente repassa a resposta recebida
+        return response;
+    }
+
+    // ESTE JÁ É DOS NOVOS PEGANDO DA PESSOAS-API
     @GetMapping("/filtrarPessoas")
     public ResponseEntity<PageableResponse<DadosPessoasGeralRcd>> filtrar(
             PessoaFilter filter, // O Spring ainda popula este objeto, o que é ótimo!
@@ -61,8 +80,6 @@ public class PessoasController {
                 .map(order -> order.getProperty() + "," + order.getDirection().name())
                 .toArray(String[]::new);
         String[] sortToSend = sortParams.length > 0 ? sortParams : null;
-
-
 
         // Converter o campo Date para uma String no formato YYYY-MM-DD
         String dataNascimentoStr = null;
@@ -86,30 +103,6 @@ public class PessoasController {
 
         return ResponseEntity.ok(resultados);
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    // DAQUI PARA BAIXO PEGANDO LOCALMENTE SEM BUSCAR NO PESSOAS-API
-
-    @GetMapping
-    public Page<DadosPessoasRcd> findall(@PageableDefault (sort={"nome"}) Pageable paginacao){
-        return pessoasRepository.findAll(paginacao).map(DadosPessoasRcd::fromPessoas);
-    }
-    @GetMapping("/filter")
-    public Page<DadosPessoasReduzidoRcd> pesquisar(PessoasFilter filter, Pageable pageable) {
-        return pessoasService.pesquisar(filter, pageable);
-    }
-
-    /*
-        Este metodo filtra/traz apenas pessoas que não pertencem a nenhuma equipe.
-        ele esta sendo usado na tela de cadastro de atletas, onde um mesmo atleta não pode pertencer a mais de uma equipe.
-     */
-    @GetMapping("/pessoaNotInEquipes")
-    public Page<DadosPessoasReduzidoRcd> pesquisarByPessoa(PessoasFilter filter, Pageable pageable) {
-        return pessoasService.pessoaNotInEquipes(filter, pageable);
-    }
-
 }
 
 

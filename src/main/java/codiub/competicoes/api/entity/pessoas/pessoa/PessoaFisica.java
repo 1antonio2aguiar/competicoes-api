@@ -47,10 +47,10 @@ public class PessoaFisica extends Pessoa {
     @Column(name = "nome_pai", length = 100)
     private String nomePai;
 
-    public PessoaFisica(String nome, String observacao, Situacao situacao, TiposPessoas tiposPessoas,
+    public PessoaFisica(String nome, /*String fisicaJuridica,*/ String observacao, Situacao situacao, TiposPessoas tiposPessoas,
                         String cpf, String sexo, String estadoCivil, LocalDate dataNascimento,
                         String nomeMae, String nomePai) {
-        super(nome, observacao, situacao, tiposPessoas); // Chama o construtor da classe pai
+        super(nome, /*fisicaJuridica,*/ observacao, situacao, tiposPessoas); // Chama o construtor da classe pai
         // ...
     }
 

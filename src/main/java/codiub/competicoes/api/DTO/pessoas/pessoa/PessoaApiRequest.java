@@ -3,6 +3,7 @@ import java.time.LocalDate;
 
 public record PessoaApiRequest(
         String nome,
+        String fisicaJuridica,
         String observacao,
         Integer situacao, // Código do Enum
         Long tipoPessoaId,

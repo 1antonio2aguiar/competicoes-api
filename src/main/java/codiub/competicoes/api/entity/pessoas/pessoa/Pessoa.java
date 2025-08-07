@@ -28,6 +28,7 @@ public abstract class Pessoa implements Serializable { // Tornar abstrata
 
     @Column(nullable = false, length = 200)
     private String nome;
+    //private String fisicaJuridica;
 
     // Este campo será gerenciado pelo @DiscriminatorColumn e @DiscriminatorValue
     // mas pode ser útil tê-lo se você precisa consultá-lo diretamente.
