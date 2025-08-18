@@ -1,22 +1,59 @@
 package codiub.competicoes.api.client;
 
 import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
+import codiub.competicoes.api.DTO.pessoas.pessoa.*;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
 import codiub.competicoes.api.utils.PageableResponse;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
 
 @FeignClient(name = "pessoas-api", url = "${api.pessoas.url}") // URL configurada no application.properties
 public interface PessoaApiClient {
+
+    // ==========================================================
+    // === NOVOS MÉTODOS PARA PESSOA FÍSICA              ========
+    // ==========================================================
+    // Assumindo que a pessoas-api tem um endpoint /pessoaFisica
+    // E que os DTOs de request/response são os mesmos (PessoaApiRequest/PessoaApiResponse)
+
+    @PostMapping("/pessoaFisica")
+    ResponseEntity<PessoaApiResponse> insertPessoaFisica(@RequestBody @Valid PessoaApiRequest dados);
+
+    @PutMapping("/pessoaFisica/{id}")
+    ResponseEntity<PessoaApiResponse> updatePessoaFisica(@PathVariable("id") Long id, @RequestBody @Valid PessoaApiRequest dados);
+
+    @GetMapping("/pessoaFisica/{id}")
+    ResponseEntity<PessoaApiResponse> findPessoaFisicaById(@PathVariable("id") Long id);
+
+    @DeleteMapping("/pessoaFisica/{id}")
+    ResponseEntity<Void> deletePessoaFisica(@PathVariable("id") Long id);
+
+    // ==========================================================
+
+
+    // ==========================================================
+    // === MÉTODOS PARA PESSOA JURÍDICA                       ===
+    // ==========================================================
+    @PostMapping("/pessoaJuridica")
+    ResponseEntity<PessoaJuridicaApiResponse> insertPessoaJuridica(@RequestBody @Valid PessoaJuridicaApiRequest dados);
+
+    @PutMapping("/pessoaJuridica/{id}")
+    ResponseEntity<PessoaJuridicaApiResponse> updatePessoaJuridica(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid PessoaJuridicaApiRequest dados);
+
+    @DeleteMapping("/pessoaJuridica/{id}")
+    ResponseEntity<Void> deletePessoaJuridica(@PathVariable("id") Long id);
+
+    // ==========================================================
 
     // ESTA BUSCA É MISTA BUSCA EM EQUIPES E DE EQUIPES BUSCA AS PESSOAS NA PESSOAS-API
     @GetMapping("/pessoa/{id}") // Corresponde ao endpoint na pessoas-api
@@ -65,8 +102,6 @@ public interface PessoaApiClient {
             @RequestParam(value = "sort", required = false) String[] sort
     );
 
-    ///
-
     @GetMapping("/pessoa/filtrar")
     PageableResponse<DadosPessoasReduzidoRcd> filtrarPessoasFisica(
             // Parâmetros do PessoaFilter desmembrados
@@ -81,8 +116,6 @@ public interface PessoaApiClient {
             @RequestParam(value = "sort", required = false) String[] sort
     );
 
-
-    // TRABALHANDO AQUI. >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     @GetMapping("/pessoaFisica/filtrar")
     Page<DadosPessoasReduzidoRcd> filtrarPessoasFisica(
         @RequestParam(value = "id", required = false) Long id,
@@ -91,4 +124,17 @@ public interface PessoaApiClient {
         @RequestParam(value = "dataNascimento", required = false) String dataNascimento,
         Pageable pageable
     );
+
+
+    // ==========================================================
+    // === MÉTODO GENÉRICO PARA DELETAR PESSOA (PF OU PJ)     ===
+    // ==========================================================
+    /**
+     * Deleta uma pessoa (física ou jurídica) pelo seu ID.
+     * Este método chama o endpoint genérico da pessoas-api que já lida
+     * com a exclusão em cascata de endereços, contatos, etc.
+     */
+    @DeleteMapping("/pessoa/{id}")
+    ResponseEntity<Void> deletePessoa(@PathVariable("id") Long id);
+
 }

@@ -1,32 +1,24 @@
 package codiub.competicoes.api.controller.pessoas;
 
-import codiub.competicoes.api.DTO.campeonato.DadosListCampeonatoRcd;
-import codiub.competicoes.api.DTO.equipe.DadosListEquipeRcd;
-import codiub.competicoes.api.DTO.pessoas.DadosPessoasRcd;
-import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
+import codiub.competicoes.api.DTO.pessoas.pessoa.DadosPessoaJuridicaReqRespRcd;
+import codiub.competicoes.api.DTO.pessoas.pessoa.PessoaJuridicaApiRequest;
+import codiub.competicoes.api.DTO.pessoas.pessoa.PessoaJuridicaApiResponse;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
 import codiub.competicoes.api.client.PessoaApiClient;
-import codiub.competicoes.api.entity.pessoas.Pessoas;
-import codiub.competicoes.api.entity.pessoas.pessoa.Pessoa;
 import codiub.competicoes.api.filter.pessoas.PessoaFilter;
-import codiub.competicoes.api.filter.pessoas.PessoasFilter;
 import codiub.competicoes.api.repository.InscricaoRepository;
 import codiub.competicoes.api.repository.pessoas.PessoasRepository;
 import codiub.competicoes.api.service.pessoas.PessoasService;
 import codiub.competicoes.api.utils.PageableResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -102,6 +94,13 @@ public class PessoasController {
         );
 
         return ResponseEntity.ok(resultados);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        pessoasService.delete(id);
+        // Retorna 204 No Content, que é o padrão para um DELETE bem-sucedido.
+        return ResponseEntity.noContent().build();
     }
 }
 

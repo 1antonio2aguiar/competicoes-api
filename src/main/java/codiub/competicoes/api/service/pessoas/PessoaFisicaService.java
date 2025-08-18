@@ -133,27 +133,6 @@ public class PessoaFisicaService {
         );
     }
 
-
-    // Adapte seus métodos findById, update, delete para usar o PessoaRemoteClientService também.
-
-
-
-    /*public PessoaFisica insert(DadosInsertPessoaFisicaRcd dados){
-        PessoaFisica pessoaFisica = new PessoaFisica();
-
-        BeanUtils.copyProperties(dados, pessoaFisica, "id");
-
-        //Busco tipo pessoa
-        TiposPessoas tiposPessoas = tiposPessoasRepository.findById(dados.tipoPessoaId()).get();
-        pessoaFisica.setTiposPessoas(tiposPessoas);
-
-        pessoaFisica.setSituacao(Situacao.toSituacaoEnum(dados.situacao()));
-        pessoaFisica.setEstadoCivil(EstadoCivil.toEstadocivilEnum(dados.estadoCivil()));
-
-        return pessoaFisicaRepository.save(pessoaFisica);
-    }*/
-
-
     // Delete
     public void delete(Long id){
         PessoaFisica pessoaFisicaDel = pessoaFisicaRepository.findById(id)
