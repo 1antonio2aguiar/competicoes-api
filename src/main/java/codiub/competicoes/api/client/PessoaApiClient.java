@@ -4,6 +4,7 @@ import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoa.*;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
+import codiub.competicoes.api.entity.pessoas.pessoa.Pessoa;
 import codiub.competicoes.api.utils.PageableResponse;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @FeignClient(name = "pessoas-api", url = "${api.pessoas.url}") // URL configurada no application.properties
 public interface PessoaApiClient {
@@ -83,6 +85,12 @@ public interface PessoaApiClient {
     * */
     @GetMapping("/pessoa/pesquisar") // <<< Caminho para o endpoint unificado
     ResponseEntity<List<?>> pesquisarPorTermo(
+            @RequestParam("termo") String termo,
+            @RequestParam(value = "completo", required = false) Boolean completo
+    );
+
+    @GetMapping("/pessoa/pesquisar")
+    ResponseEntity<List<DadosPessoasfjReduzRcd>> pesquisarPessoasReduzidoPorTermo(
             @RequestParam("termo") String termo,
             @RequestParam(value = "completo", required = false) Boolean completo
     );

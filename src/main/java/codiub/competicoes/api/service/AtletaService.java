@@ -1,5 +1,6 @@
 package codiub.competicoes.api.service;
 
+import codiub.competicoes.api.DTO.atletas.DadosAtletasReduzidoRcd;
 import codiub.competicoes.api.DTO.atletas.DadosInsertAtletasRcd;
 import codiub.competicoes.api.DTO.atletas.DadosListAtletasRcd;
 import codiub.competicoes.api.DTO.atletas.DadosUpdateAtletaRcd;
@@ -21,6 +22,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -77,6 +79,61 @@ public class AtletaService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(pessoasDisponiveis, pageable, responseDaApi.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DadosAtletasReduzidoRcd> atletaNotInInscricoes(AtletaFilter filter, Pageable pageable) {
+        Set<Long> idsDePessoasFiltradasPorNome = null;
+
+        // --- PASSO DE PRÉ-FILTRAGEM (SE O FILTRO DE NOME EXISTIR) ---
+        if (filter.getPessoaNome() != null && !filter.getPessoaNome().trim().isEmpty()) {
+
+            // Chamamos o NOVO método, que já nos dá o tipo correto!
+            ResponseEntity<List<DadosPessoasfjReduzRcd>> response = pessoaApiClient.pesquisarPessoasReduzidoPorTermo(filter.getPessoaNome(), false);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                idsDePessoasFiltradasPorNome = response.getBody().stream()
+                        .map(DadosPessoasfjReduzRcd::id) // << Sem cast, limpo e seguro
+                        .collect(Collectors.toSet());
+            } else {
+                idsDePessoasFiltradasPorNome = new HashSet<>();
+            }
+
+            if (idsDePessoasFiltradasPorNome.isEmpty()) {
+                return Page.empty(pageable);
+            }
+        }
+
+        // --- PASSO DE CONSULTA LOCAL ---
+        // 2. Busca os atletas, passando a lista de IDs (se existir) para o repositório.
+        Page<Atleta> atletaPage = atletaCustonRepository.atletaNotInInscricoes(filter, pageable, idsDePessoasFiltradasPorNome);
+        List<Atleta> atletasDaPagina = atletaPage.getContent();
+
+        if (atletasDaPagina.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        // --- PASSO DE ENRIQUECIMENTO (COMO ANTES) ---
+        // 3. Coleta os 'pessoaId' da página de resultados para buscar os nomes completos.
+        Set<Long> pessoaIdsParaEnriquecer = atletasDaPagina.stream()
+                .map(Atleta::getPessoaId)
+                .collect(Collectors.toSet());
+
+        // 4. Faz a chamada para a 'pessoas-api' para obter os nomes.
+        List<DadosPessoasfjReduzRcd> pessoasInfo = pessoaApiClient.findPessoasByIds(pessoaIdsParaEnriquecer);
+        Map<Long, String> mapaIdParaNome = pessoasInfo.stream()
+                .collect(Collectors.toMap(DadosPessoasfjReduzRcd::id, DadosPessoasfjReduzRcd::nome));
+
+        // 5. Constrói o DTO final.
+        List<DadosAtletasReduzidoRcd> atletasDTOList = atletasDaPagina.stream()
+                .map(atleta -> new DadosAtletasReduzidoRcd(
+                        atleta.getId(),
+                        mapaIdParaNome.getOrDefault(atleta.getPessoaId(), "Nome não disponível"),
+                        atleta.getEquipe().getNome()
+                ))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(atletasDTOList, pageable, atletaPage.getTotalElements());
     }
 
     // O método de cima traz pessoas fisica e juridia

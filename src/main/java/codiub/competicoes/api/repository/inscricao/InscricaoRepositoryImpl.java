@@ -83,14 +83,14 @@ public class InscricaoRepositoryImpl implements InscricaoRepositoryQuery {
         }
 
         // NOME DO ATLETA
-        if (StringUtils.hasLength(inscricaoFilter.getAtletaFilter().getPessoaNome())) {
+        /*if (StringUtils.hasLength(inscricaoFilter.getAtletaFilter().getPessoaNome())) {
             predicates.add(
                     builder.like(
                         builder.lower(root.get(Inscricoes_.ATLETA)
                                 .get(Atleta_.PESSOA)
                                 .get(Pessoas_.NOME)),
                             "%" + inscricaoFilter.getAtletaFilter().getPessoaNome().toLowerCase() + "%"));
-        }
+        }*/
 
         // Filtrar por prova e serie
         if(inscricaoFilter.getSerie() != null) {

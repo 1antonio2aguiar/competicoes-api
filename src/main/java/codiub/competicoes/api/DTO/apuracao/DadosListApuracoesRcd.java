@@ -11,6 +11,7 @@ public record DadosListApuracoesRcd(
         Long inscricaoId,
         Long provaId,
         Long atletaId,
+        String atletaNome, // << CAMPO ADICIONADO
         Integer status,
         String statusDescricao,
         String resultado, // String formatada
@@ -19,71 +20,30 @@ public record DadosListApuracoesRcd(
 ) {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
 
-    // Construtor "completo" (gerado pelo record)
-    public DadosListApuracoesRcd(Long id, Long inscricaoId, Long provaId, Long atletaId,
-                                 Integer status, String statusDescricao, String resultado, String observacao,
-        Long pontuacaoId) {
-        this.id = id;
-        this.inscricaoId = inscricaoId;
-        this.provaId = provaId;
-        this.atletaId = atletaId;
-        this.status = status;
-        this.statusDescricao = statusDescricao;
-        this.resultado = resultado;
-        this.observacao = observacao;
-        this.pontuacaoId = pontuacaoId;
-    }
+    // O construtor canônico (com todos os campos) é gerado automaticamente pelo record.
+    // NÃO precisamos mais dos construtores manuais. Vamos removê-los para simplificar.
 
-    // Construtor auxiliar que recebe Long para resultadoMillis e formata
-    public DadosListApuracoesRcd(
-            Long id,
-            Long inscricaoId,
-            Long provaId,
-            Long atletaId,
-            Integer status,
-            String statusDescricao,
-            Long resultadoMillis, // Recebe Long
-            String observacao,
-            Long pontuacaoId
-    ) {
-        this(
-                id,
-                inscricaoId,
-                provaId,
-                atletaId,
-                status,
-                statusDescricao,
-                formatTime(resultadoMillis), // Formata resultado
-                observacao,
-                pontuacaoId
-        );
-    }
-
-    // Método para formatar o tempo (mantido como estava)
+    // Método para formatar o tempo (continua igual)
     private static String formatTime(Long timeInMillis) {
-        if (timeInMillis == null) {
-            return null; // Ou retorne uma string vazia, se preferir ""
-        }
+        if (timeInMillis == null) { return null; }
         return sdf.format(new Date(timeInMillis));
     }
 
-    // Método para criar o DTO a partir de uma entidade Apuracoes
-    public static DadosListApuracoesRcd fromApuracao(Apuracao apuracao) {
+    // 2. MODIFIQUE O MÉTODO DE FÁBRICA
+    // Ele agora recebe a Apuracao, o atletaNome, e faz a formatação do tempo aqui dentro.
+    public static DadosListApuracoesRcd fromApuracao(Apuracao apuracao, String atletaNome) {
         return new DadosListApuracoesRcd(
                 apuracao.getId(),
                 apuracao.getInscricao().getId(),
                 apuracao.getProva().getId(),
                 apuracao.getAtleta().getId(),
+                atletaNome, // << USA O NOVO PARÂMETRO
                 apuracao.getStatus().getCodigo(),
                 apuracao.getStatus().getDescricao(),
-                apuracao.getResultado(), // Passa o Long para o construtor formatar
+                formatTime(apuracao.getResultado()), // Formata o resultado aqui
                 apuracao.getObservacao(),
-                apuracao.getPontuacao().getId()
+                apuracao.getPontuacao() != null ? apuracao.getPontuacao().getId() : null // Proteção contra nulo
         );
     }
 
-    // Método para lidar com o Optional<Apuracao>
-    public static DadosListApuracoesRcd fromOptionalApuracao(Optional<Apuracao> apuracaoOptional) {
-        return apuracaoOptional.map(DadosListApuracoesRcd::fromApuracao).orElse(null);
-    }
 }

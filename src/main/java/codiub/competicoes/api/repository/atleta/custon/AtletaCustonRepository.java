@@ -11,35 +11,54 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class AtletaCustonRepository {
 
+    // --- ESTA É A LINHA QUE ESTAVA FALTANDO ---
     @PersistenceContext
     private EntityManager manager;
+    // ------------------------------------------
 
-    public Page<Atleta> atletaNotInInscricoes(AtletaFilter filter, Pageable pageable) {
-        String nomeFilter = filter.getPessoaNome();
+    public Page<Atleta> atletaNotInInscricoes(AtletaFilter filter, Pageable pageable, Set<Long> pessoaIdsFiltrados) {
+        Long provaId = filter.getProvaId();
 
-        String queryStr = "SELECT a FROM Atleta a " +
-                "JOIN FETCH a.pessoa p " + // Carrega os dados da pessoa junto
-                "JOIN FETCH a.equipe e " +  // Carrega os dados da equipe junto
-                "WHERE NOT EXISTS (SELECT i FROM Inscricao i WHERE i.atleta = a)";
-
-        String countQueryStr = "SELECT COUNT(a) FROM Atleta a " +
-                "WHERE NOT EXISTS (SELECT i FROM Inscricao i WHERE i.atleta = a)";
-
-        if (nomeFilter != null && !nomeFilter.isEmpty()) {
-            queryStr += " AND UPPER(a.pessoa.nome) LIKE UPPER(:nome)";
-            countQueryStr += " AND UPPER(a.pessoa.nome) LIKE UPPER(:nome)";
+        if (provaId == null) {
+            throw new IllegalArgumentException("O ID da prova (provaId) é obrigatório para esta consulta.");
         }
 
-        Query query = manager.createQuery(queryStr, Atleta.class); // Especifica Atleta.class
-        Query countQuery = manager.createQuery(countQueryStr);
+        StringBuilder queryStrBuilder = new StringBuilder(
+                "SELECT a FROM Atleta a " +
+                        "JOIN FETCH a.equipe e " +
+                        "WHERE NOT EXISTS (" +
+                        "  SELECT i FROM Inscricao i " +
+                        "  WHERE i.atleta = a AND i.prova.id = :provaId" +
+                        ")"
+        );
 
-        if (nomeFilter != null && !nomeFilter.isEmpty()) {
-            query.setParameter("nome", "%" + nomeFilter.toUpperCase() + "%");
-            countQuery.setParameter("nome", "%" + nomeFilter.toUpperCase() + "%");
+        StringBuilder countQueryStrBuilder = new StringBuilder(
+                "SELECT COUNT(a) FROM Atleta a " +
+                        "WHERE NOT EXISTS (" +
+                        "  SELECT i FROM Inscricao i " +
+                        "  WHERE i.atleta = a AND i.prova.id = :provaId" +
+                        ")"
+        );
+
+        if (pessoaIdsFiltrados != null && !pessoaIdsFiltrados.isEmpty()) {
+            queryStrBuilder.append(" AND a.pessoaId IN :pessoaIds");
+            countQueryStrBuilder.append(" AND a.pessoaId IN :pessoaIds");
+        }
+
+        Query query = manager.createQuery(queryStrBuilder.toString(), Atleta.class);
+        Query countQuery = manager.createQuery(countQueryStrBuilder.toString());
+
+        query.setParameter("provaId", provaId);
+        countQuery.setParameter("provaId", provaId);
+
+        if (pessoaIdsFiltrados != null && !pessoaIdsFiltrados.isEmpty()) {
+            query.setParameter("pessoaIds", pessoaIdsFiltrados);
+            countQuery.setParameter("pessoaIds", pessoaIdsFiltrados);
         }
 
         query.setFirstResult((int) pageable.getOffset());

@@ -11,19 +11,21 @@ import java.util.Date;
 public record DadosListEtapaRcd(Long id, Long empresa, String nome , long campeonato,
     long localCompeticao,
     Date dataEtapa,Date dataInscricao, String pontua, String acumula,
-    String descricao ){
+    String descricao,
+    Integer qtdBalizas){
 
     public DadosListEtapaRcd(Etapa etapa){
         this(etapa.getId(),
-        etapa.getEmpresa().getId(),
-        etapa.getNome(),
-        etapa.getCampeonato().getId(),
-        etapa.getLocalCompeticao().getId(),
-        etapa.getDataEtapa(),
-        etapa.getDataInscricao(),
-        etapa.getPontua(),
-        etapa.getAcumula(),
-        etapa.getDescricao()
+            etapa.getEmpresa().getId(),
+            etapa.getNome(),
+            etapa.getCampeonato().getId(),
+            etapa.getLocalCompeticao().getId(),
+            etapa.getDataEtapa(),
+            etapa.getDataInscricao(),
+            etapa.getPontua(),
+            etapa.getAcumula(),
+            etapa.getDescricao(),
+            etapa.getQtdBalizas()
         );
     }
 }

@@ -8,4 +8,5 @@ public class AtletaFilter {
     private String categoria;
     private String pessoaNome;
     private String equipeNome;
+    private Long provaId;
 }

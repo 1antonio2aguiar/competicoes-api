@@ -28,6 +28,7 @@ public class Etapa {
     private Date dataInscricao;
     private String pontua;
     private String acumula;
+    private Integer qtdBalizas;
 
     @ManyToOne
     @JoinColumn(name = "empresa_id")

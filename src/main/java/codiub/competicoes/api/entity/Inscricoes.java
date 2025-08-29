@@ -38,5 +38,8 @@ public class Inscricoes {
     @JoinColumn(name = "atleta_id")
     private Atleta atleta;
 
+    @OneToOne(mappedBy = "inscricao", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    private Apuracao apuracao;
+
 }
 

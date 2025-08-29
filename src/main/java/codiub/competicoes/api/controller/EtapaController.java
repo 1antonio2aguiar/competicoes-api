@@ -74,6 +74,7 @@ public class EtapaController {
     @Transactional
     @PutMapping(value = "/{id}")
     public ResponseEntity update(@PathVariable @Valid Long id, @RequestBody DadosUpdateEtapaRcd dados){
+        System.err.println("Dados " + dados);
         var salva = etapaService.update(id, dados);
         return ResponseEntity.ok().body(new DadosListEtapaRcd(salva));
     }

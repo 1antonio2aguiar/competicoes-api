@@ -9,7 +9,6 @@ public record DadosAtletasReduzidoRcd(
         Long id,
         String nome,
         String equipeNome
-
 ) {
 
 }

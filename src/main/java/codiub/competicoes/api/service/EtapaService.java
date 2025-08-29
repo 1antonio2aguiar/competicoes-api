@@ -66,6 +66,7 @@ public class EtapaService {
 
     // update
     public Etapa update(Long id, DadosUpdateEtapaRcd dados){
+
         Etapa etapaUpd = etapasRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Etapa não cadastrada. Id: " + id));
         BeanUtils.copyProperties(dados, etapaUpd, "id");

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApuracaoRepository extends JpaRepository<Apuracao, Long>, ApuracaoRepositoryQuery {
 
@@ -20,4 +21,6 @@ public interface ApuracaoRepository extends JpaRepository<Apuracao, Long>, Apura
     @Modifying
     @Query(value = "UPDATE apuracoes SET status = :#{#status.ordinal()} WHERE id = :apuracaoId", nativeQuery = true)
     int updateStatusById(@Param("apuracaoId") Long apuracaoId, @Param("status") StatusApuracao status);
+
+    Optional<Apuracao> findByInscricaoId(Long inscricaoId);
 }

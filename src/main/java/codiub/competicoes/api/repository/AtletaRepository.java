@@ -25,5 +25,4 @@ public interface AtletaRepository extends JpaRepository<Atleta, Long>, AtletaRep
     Page<Atleta> filtrarComPessoaIds(AtletaFilter filter, Set<Long> pessoaIds, Pageable pageable);
 
     boolean existsByPessoaId(Long pessoaId);
-
 }

@@ -14,7 +14,8 @@ public record DadosUpdateEtapaRcd(
     Date dataInscricao,
     String pontua,
     String acumula,
-    String descricao
+    String descricao,
+    Integer qtdBalizas
 ) {
 
     public DadosUpdateEtapaRcd(Etapa etapa) {
@@ -24,7 +25,9 @@ public record DadosUpdateEtapaRcd(
             etapa.getDataInscricao(),
             etapa.getPontua(),
             etapa.getAcumula(),
-            etapa.getDescricao());
+            etapa.getDescricao(),
+            etapa.getQtdBalizas()
+        );
     }
     public String getNome(){
         return nome.toUpperCase();

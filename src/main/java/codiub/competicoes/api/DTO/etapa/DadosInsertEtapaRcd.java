@@ -16,7 +16,8 @@ public record DadosInsertEtapaRcd(
         Date dataEtapa,
         Date dataInscricao,
         String pontua,
-        String acumula
+        String acumula,
+        Integer qtdBalizas
 ) {
         public String getNome(){
                 return nome.toUpperCase();

@@ -73,13 +73,13 @@ public class ApuracaoRepositoryImpl implements ApuracaoRepositoryQuery {
         }
 
         // NOME DO ATLETA
-        if (StringUtils.hasLength(apuracaoFilter.getAtletaFilter().getPessoaNome())) {
+        /*if (StringUtils.hasLength(apuracaoFilter.getAtletaFilter().getPessoaNome())) {
             predicates.add(
                     builder.like(
                             builder.lower(root.get(Apuracao_.ATLETA)
                                     .get(Atleta_.PESSOA).get(Pessoas_.NOME)),
                             "%" + apuracaoFilter.getAtletaFilter().getPessoaNome() + "%"));
-        }
+        }*/
 
         // Filtrar por prova e serie
         if(apuracaoFilter.getSerie() != null) {

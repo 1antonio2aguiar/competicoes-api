@@ -40,6 +40,15 @@ public class AtletaController {
     ) {
         return atletaService.pesquisarPessoasDisponiveisParaAtleta(filter, pageable);
     }
+    @GetMapping("/disponiveis-para-inscricao")
+    public Page<DadosAtletasReduzidoRcd> pesquisarByAtleta(
+            AtletaFilter filter,
+            Pageable pageable,
+            @RequestParam(value = "completo", required = false) Boolean completo // << Adicionaria aqui
+    ) {
+        // Agora você poderia usar a variável 'completo'
+        return atletaService.atletaNotInInscricoes(filter, pageable);
+    }
     @GetMapping("/filter")
         public Page<DadosListAtletasRcd> pesquisar(AtletaFilter filter, Pageable pageable) {
             return atletaService.pesquisar(filter, pageable);

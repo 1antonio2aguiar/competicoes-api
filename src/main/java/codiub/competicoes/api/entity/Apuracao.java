@@ -34,8 +34,8 @@ public class Apuracao {
     @JoinColumn(name = "prova_id")
     private Prova prova;
 
-    @ManyToOne
-    @JoinColumn(name = "inscricao_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inscricao_id", unique = true)
     private Inscricoes inscricao;
 
     @OneToOne
