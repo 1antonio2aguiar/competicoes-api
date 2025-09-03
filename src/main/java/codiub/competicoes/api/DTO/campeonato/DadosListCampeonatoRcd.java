@@ -10,7 +10,7 @@ public record DadosListCampeonatoRcd(Long id, String empresa, String nome, Strin
 
     public DadosListCampeonatoRcd(Campeonato campeonato){
         this(campeonato.getId(),
-                campeonato.getEmpresa().getNome(),
+                campeonato.getEmpresa().getRazaoSocial(),
                 campeonato.getNome(),
                 campeonato.getDescricao(),
                 campeonato.getModalidade().getId(),
@@ -18,7 +18,7 @@ public record DadosListCampeonatoRcd(Long id, String empresa, String nome, Strin
     }
     public DadosListCampeonatoRcd(Optional<Campeonato> campeonato) {
         this(campeonato.get().getId(),
-                campeonato.get().getEmpresa().getNome(),
+                campeonato.get().getEmpresa().getRazaoSocial(),
                 campeonato.get().getNome(),
                 campeonato.get().getDescricao(),
                 campeonato.get().getModalidade().getId(),

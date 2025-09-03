@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class AtletaFilter {
     private Long id;
+    private Long empresaId;
     private String categoria;
     private String pessoaNome;
     private String equipeNome;

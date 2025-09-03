@@ -29,7 +29,7 @@ public record DadosListAtletasRcd(
 
                     return new DadosListAtletasRcd(
                             atleta.getId(),
-                            atleta.getEmpresa() != null ? atleta.getEmpresa().getNome() : null,
+                            atleta.getEmpresa() != null ? atleta.getEmpresa().getRazaoSocial() : null,
                             atleta.getCategoria() != null ? atleta.getCategoria().getId() : null,
                             atleta.getCategoria() != null ? atleta.getCategoria().getDescricao() : null,
                             pessoaDto,
@@ -45,7 +45,7 @@ public record DadosListAtletasRcd(
     public static DadosListAtletasRcd fromAtleta(Atleta atleta, DadosPessoasReduzidoRcd pessoaDto) {
         return new DadosListAtletasRcd(
                 atleta.getId(),
-                atleta.getEmpresa() != null ? atleta.getEmpresa().getNome() : null,
+                atleta.getEmpresa() != null ? atleta.getEmpresa().getRazaoSocial() : null,
                 atleta.getCategoria() != null ? atleta.getCategoria().getId() : null,
                 atleta.getCategoria() != null ? atleta.getCategoria().getDescricao() : null,
                 pessoaDto, // 1. Passa o objeto completo da pessoa

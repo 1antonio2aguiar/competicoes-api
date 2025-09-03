@@ -5,7 +5,7 @@ import lombok.*;
 
 @EqualsAndHashCode(of = "id")
 @Entity(name = "Empresa")
-@Table(name = "vw_empresas")
+@Table(name = "EMPRESAS")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,12 +17,23 @@ public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // A anotação @Column é opcional quando o nome do campo é igual ao da coluna,
+    // mas é uma boa prática ser explícito.
+    @Column(name = "RAZAO_SOCIAL", nullable = false)
+    private String razaoSocial;
+
+    @Column(name = "ATIVIDADE", nullable = false)
+    private String atividade;
+
+    @Column(name = "TELEFONE", nullable = false)
+    private String telefone;
+
+    @Column(name = "CNPJ", nullable = false, unique = true)
     private String cnpj;
-    private String nome;
-    private String sigla;
-    private String logo;
-    private char situacao;
-    private char filial;
-    private Long matriz;
+
+    @Column(name = "INSCRICAO_ESTADUAL", nullable = false)
+    private String inscricaoEstadual;
+
 }
 

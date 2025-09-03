@@ -7,6 +7,7 @@ import codiub.competicoes.api.DTO.atletas.DadosUpdateAtletaRcd;
 import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
 import codiub.competicoes.api.client.PessoaApiClient;
+import codiub.competicoes.api.commom.UserInfoProvider;
 import codiub.competicoes.api.entity.*;
 import codiub.competicoes.api.filter.AtletaFilter;
 import codiub.competicoes.api.filter.pessoas.PessoaFisicaFilter;
@@ -40,6 +41,8 @@ public class AtletaService {
     @Autowired private PessoasRepository pessoasRepository;
     @Autowired private CategoriaRepository categoriaRepository;
     @Autowired private AtletaCustonRepository atletaCustonRepository;
+    @Autowired
+    private UserInfoProvider userInfoProvider;
 
     @Autowired
     private PessoaApiClient pessoaApiClient;
@@ -66,6 +69,9 @@ public class AtletaService {
                 pageable
         );
 
+        Long empresaId = userInfoProvider.getEmpresaId();
+        filter.setEmpresaId(empresaId);
+
         // 2. O restante do código funciona exatamente como antes
         List<DadosPessoasReduzidoRcd> candidatos = responseDaApi.getContent();
         if (candidatos.isEmpty()) {
@@ -84,6 +90,9 @@ public class AtletaService {
     @Transactional(readOnly = true)
     public Page<DadosAtletasReduzidoRcd> atletaNotInInscricoes(AtletaFilter filter, Pageable pageable) {
         Set<Long> idsDePessoasFiltradasPorNome = null;
+
+        Long empresaId = userInfoProvider.getEmpresaId();
+        filter.setEmpresaId(empresaId);
 
         // --- PASSO DE PRÉ-FILTRAGEM (SE O FILTRO DE NOME EXISTIR) ---
         if (filter.getPessoaNome() != null && !filter.getPessoaNome().trim().isEmpty()) {
@@ -141,6 +150,9 @@ public class AtletaService {
     @Transactional(readOnly = true)
     public Page<DadosListAtletasRcd> pesquisar(AtletaFilter filter, Pageable pageable) {
         Set<Long> idsDePessoasFiltradasPorNome = null;
+
+        Long empresaId = userInfoProvider.getEmpresaId();
+        filter.setEmpresaId(empresaId);
 
         // ETAPA 1: Se um nome de pessoa foi fornecido, busca os IDs correspondentes na API de Pessoas.
         if (StringUtils.hasText(filter.getPessoaNome())) {

@@ -86,7 +86,7 @@ public class EquipeController {
         // 5. Usa os dados obtidos para construir o DTO de resposta.
         DadosListEquipeRcd dtoResposta = new DadosListEquipeRcd(
                 equipeSalva.getId(),
-                equipeSalva.getEmpresa() != null ? equipeSalva.getEmpresa().getNome() : null,
+                equipeSalva.getEmpresa() != null ? equipeSalva.getEmpresa().getRazaoSocial() : null,
                 pessoasMap.get(equipeSalva.getAgremiacaoId()), // Busca a agregação no mapa
                 equipeSalva.getNome(),
                 equipeSalva.getSigla(),

@@ -3,6 +3,9 @@ package codiub.competicoes.api.entity;
 import codiub.competicoes.api.entity.pessoas.Pessoas;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 @EqualsAndHashCode(of = "id")
 @Entity(name = "Atleta")
@@ -12,6 +15,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@FilterDef(name = "filtroEmpresa", parameters = @ParamDef(name = "empresaId", type = Long.class))
+@Filter(name = "filtroEmpresa", condition = "empresa_id = :empresaId")
 public class Atleta {
 
     private static final long serialVersionUID = 1L;

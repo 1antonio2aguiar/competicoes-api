@@ -5,6 +5,7 @@ import java.util.Date;
 
 @Data
 public class PessoaFisicaFilter {
+    private Long empresaId;
     private Long id;
     private String nome;
     private String cpf;

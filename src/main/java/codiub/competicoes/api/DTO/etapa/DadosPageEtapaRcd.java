@@ -12,7 +12,7 @@ public record DadosPageEtapaRcd(Long id, String empresa, String campeonato, Stri
 
     public DadosPageEtapaRcd(Etapa etapa){
         this(etapa.getId(),
-            etapa.getEmpresa().getNome(),
+            etapa.getEmpresa().getRazaoSocial(),
             etapa.getCampeonato().getNome(),
             etapa.getLocalCompeticao().getNome(),
             etapa.getNome(),
@@ -25,7 +25,7 @@ public record DadosPageEtapaRcd(Long id, String empresa, String campeonato, Stri
     }
     public DadosPageEtapaRcd(Optional<Etapa> etapa) {
         this(etapa.get().getId(),
-            etapa.get().getEmpresa().getNome(),
+            etapa.get().getEmpresa().getRazaoSocial(),
             etapa.get().getCampeonato().getNome(),
             etapa.get().getLocalCompeticao().getNome(),
             etapa.get().getNome(),
