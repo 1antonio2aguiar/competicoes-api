@@ -36,6 +36,8 @@ public class TokenService {
                     .withSubject(usuario.getEmail())         // 3. Adiciona o "dono" (email)
                     .withClaim("id", usuario.getId())        // 4. Adiciona o ID do usuário
                     .withClaim("nome", usuario.getNome())      // 5. <<< ADICIONA O NOME DO USUÁRIO
+                    .withClaim("empresaId", usuario.getEmpresa().getId())
+                    .withClaim("razaoSocial", usuario.getEmpresa().getRazaoSocial())
                     .withExpiresAt(dataExpiracao())          // 6. Adiciona a data de expiração
                     .sign(algoritmo);                        // 7. Assina e finaliza o token
             // ========================================================
@@ -71,7 +73,7 @@ public class TokenService {
      */
     private Instant dataExpiracao() {
         // Define que o token expira em 2 horas, no fuso horário de Brasília
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(12).toInstant(ZoneOffset.of("-03:00"));
     }
 
 }

@@ -2,7 +2,8 @@ package codiub.competicoes.api.filter;
 import lombok.Data;
 
 @Data
-public class EmpresaFilter {
+public class UsuarioFilter {
     private Long id;
-    private String razaoSocial;
+    private String nome;
+    private String email;
 }

@@ -1,6 +1,7 @@
 package codiub.competicoes.api.commom;
 
-import codiub.competicoes.api.repository.seguranca.UsuarioRepository;
+import codiub.competicoes.api.entity.seguranca.Usuario;
+import codiub.competicoes.api.repository.seguranca.usuario.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,18 +31,29 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         // 2. Se um token foi enviado...
         if (tokenJWT != null) {
-            // 3. Valida o token e pega o email (subject) do usuário
-            var subject = tokenService.getSubject(tokenJWT);
+            var subject = tokenService.getSubject(tokenJWT); // Isso é o email
+            UserDetails usuario = usuarioRepository.findByEmail(subject); // Busca o usuário completo
 
-            // 4. Busca o usuário completo no banco de dados
-            UserDetails usuario = usuarioRepository.findByEmail(subject);
-
-            // 5. Se encontrou o usuário, informa ao Spring que ele está autenticado
             if (usuario != null) {
-                // Cria um objeto de autenticação para o Spring
-                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                // É bom fazer um cast aqui para a sua classe Usuario
+                Usuario usuarioAutenticado = (Usuario) usuario;
 
-                // Define a autenticação no contexto de segurança do Spring
+                // Agora, criamos o token de autenticação para o Spring Security
+                // Podemos incluir o empresaId aqui de várias formas.
+                // Uma maneira simples é adicionar como um "detail" extra.
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(usuarioAutenticado, null, usuarioAutenticado.getAuthorities());
+
+                // Opcional: Adicionar o empresaId diretamente nos detalhes da autenticação
+                // Isso permite recuperar com SecurityContextHolder.getContext().getAuthentication().getDetails()
+                if (usuarioAutenticado.getEmpresa() != null) {
+                    authentication.setDetails(usuarioAutenticado.getEmpresa().getId());
+                } else {
+                    // Tratar caso o usuário não tenha empresa (log ou erro)
+                    System.err.println("Usuário " + usuarioAutenticado.getEmail() + " não possui empresa associada no SecurityFilter.");
+                }
+
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

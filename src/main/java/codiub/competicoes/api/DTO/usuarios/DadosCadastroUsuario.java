@@ -2,14 +2,16 @@ package codiub.competicoes.api.DTO.usuarios;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
 public record DadosCadastroUsuario(
+        @NotNull(message = "A empresa é obrigatória")
+        Long empresaId,
         @NotBlank(message = "O nome é obrigatório")
         String nome,
-
         @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "Formato de e-mail inválido")
         String email,
