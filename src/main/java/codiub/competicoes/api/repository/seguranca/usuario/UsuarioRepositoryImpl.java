@@ -1,5 +1,8 @@
 package codiub.competicoes.api.repository.seguranca.usuario;
 
+import codiub.competicoes.api.entity.Empresa_;
+import codiub.competicoes.api.entity.Etapa_;
+import codiub.competicoes.api.entity.Inscricoes_;
 import codiub.competicoes.api.entity.seguranca.Usuario;
 import codiub.competicoes.api.entity.seguranca.Usuario_;
 import codiub.competicoes.api.filter.UsuarioFilter;
@@ -60,6 +63,11 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
         // ID
         if(usuarioFilter.getId() != null) {
             predicates.add(builder.equal(root.get(Usuario_.ID), usuarioFilter.getId()));
+        }
+
+        // EMPRESA ID
+        if(usuarioFilter.getEmpresaId() != null) {
+            predicates.add(builder.equal(root.get(Usuario_.EMPRESA).get(Empresa_.ID), usuarioFilter.getEmpresaId()));
         }
 
         // DESCRICAO

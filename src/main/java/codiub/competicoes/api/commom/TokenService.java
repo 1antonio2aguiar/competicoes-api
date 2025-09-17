@@ -7,10 +7,13 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
@@ -28,6 +31,13 @@ public class TokenService {
         try {
             Algorithm algoritmo = Algorithm.HMAC256(secret);
 
+            //    Coleta os nomes dos perfis (roles) do usuário
+            //    Assumimos que usuario.getAuthorities() retorna as GrantedAuthorities corretas
+            //    e que o getName() do Perfil (ou toString() do SimpleGrantedAuthority) é o nome do perfil.
+            List<String> userPerfis = usuario.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority) // Pega a string da autoridade (o nome do perfil)
+                    .collect(Collectors.toList());
+
             // ========================================================
             // <<< O FLUXO CORRETO COMEÇA AQUI
             // ========================================================
@@ -36,8 +46,9 @@ public class TokenService {
                     .withSubject(usuario.getEmail())         // 3. Adiciona o "dono" (email)
                     .withClaim("id", usuario.getId())        // 4. Adiciona o ID do usuário
                     .withClaim("nome", usuario.getNome())      // 5. <<< ADICIONA O NOME DO USUÁRIO
-                    .withClaim("empresaId", usuario.getEmpresa().getId())
-                    .withClaim("razaoSocial", usuario.getEmpresa().getRazaoSocial())
+                    .withClaim("empresaId", usuario.getEmpresa() != null ? usuario.getEmpresa().getId() : null)
+                    .withClaim("razaoSocial", usuario.getEmpresa() != null ? usuario.getEmpresa().getRazaoSocial() : null)
+                    .withClaim("perfis", userPerfis)
                     .withExpiresAt(dataExpiracao())          // 6. Adiciona a data de expiração
                     .sign(algoritmo);                        // 7. Assina e finaliza o token
             // ========================================================

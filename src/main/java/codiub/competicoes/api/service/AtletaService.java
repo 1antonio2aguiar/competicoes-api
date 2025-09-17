@@ -41,8 +41,7 @@ public class AtletaService {
     @Autowired private PessoasRepository pessoasRepository;
     @Autowired private CategoriaRepository categoriaRepository;
     @Autowired private AtletaCustonRepository atletaCustonRepository;
-    @Autowired
-    private UserInfoProvider userInfoProvider;
+
 
     @Autowired
     private PessoaApiClient pessoaApiClient;
@@ -69,7 +68,7 @@ public class AtletaService {
                 pageable
         );
 
-        Long empresaId = userInfoProvider.getEmpresaId();
+        Long empresaId = filter.getEmpresaId();
         filter.setEmpresaId(empresaId);
 
         // 2. O restante do código funciona exatamente como antes
@@ -91,7 +90,7 @@ public class AtletaService {
     public Page<DadosAtletasReduzidoRcd> atletaNotInInscricoes(AtletaFilter filter, Pageable pageable) {
         Set<Long> idsDePessoasFiltradasPorNome = null;
 
-        Long empresaId = userInfoProvider.getEmpresaId();
+        Long empresaId = filter.getEmpresaId();
         filter.setEmpresaId(empresaId);
 
         // --- PASSO DE PRÉ-FILTRAGEM (SE O FILTRO DE NOME EXISTIR) ---
@@ -151,7 +150,8 @@ public class AtletaService {
     public Page<DadosListAtletasRcd> pesquisar(AtletaFilter filter, Pageable pageable) {
         Set<Long> idsDePessoasFiltradasPorNome = null;
 
-        Long empresaId = userInfoProvider.getEmpresaId();
+        //Long empresaId = userInfoProvider.getEmpresaId();
+        Long empresaId = filter.getEmpresaId();
         filter.setEmpresaId(empresaId);
 
         // ETAPA 1: Se um nome de pessoa foi fornecido, busca os IDs correspondentes na API de Pessoas.

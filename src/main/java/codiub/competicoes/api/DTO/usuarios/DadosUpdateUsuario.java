@@ -16,6 +16,6 @@ public record DadosUpdateUsuario(
         String email,
         Boolean ativo,
         List<Long> perfisIds
-        
+
 ) {
 }

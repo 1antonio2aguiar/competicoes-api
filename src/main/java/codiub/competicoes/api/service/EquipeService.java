@@ -128,9 +128,6 @@ public class EquipeService {
         TiposModalidades modalidade = modalidadesRepository.findById(dados.modalidadeId()).get();
         equipeUpd.setModalidade(modalidade);
 
-        // Os IDs das pessoas (agremiacaoId, tecnicoId, etc.) já foram atualizados
-        // pelo BeanUtils. É só salvar.
-
         return equipeRepository.save(equipeUpd);
     }
 

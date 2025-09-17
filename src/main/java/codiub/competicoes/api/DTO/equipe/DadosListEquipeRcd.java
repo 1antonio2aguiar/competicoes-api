@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 public record DadosListEquipeRcd(
         Long id,
+        Long empresaId,
         String empresa,
         DadosPessoasfjReduzRcd agremiacao,
         String nome,
@@ -30,6 +31,7 @@ public record DadosListEquipeRcd(
         return equipes.stream()
                 .map(equipe -> new DadosListEquipeRcd(
                         equipe.getId(),
+                        equipe.getEmpresa().getId(),
                         equipe.getEmpresa() != null ? equipe.getEmpresa().getRazaoSocial() : null,
                         pessoasMap.get(equipe.getAgremiacaoId()), // Busca agremiacao no mapa
                         equipe.getNome(),
@@ -45,6 +47,7 @@ public record DadosListEquipeRcd(
     public static DadosListEquipeRcd fromEntity(Equipe equipe, DadosPessoasfjReduzRcd agremiacao, DadosPessoasfjReduzRcd tecnico, DadosPessoasfjReduzRcd assistenteTecnico) {
         return new DadosListEquipeRcd(
                 equipe.getId(),
+                equipe.getEmpresa().getId(),
                 equipe.getEmpresa() != null ? equipe.getEmpresa().getRazaoSocial() : null,
                 agremiacao,
                 equipe.getNome(),
@@ -59,6 +62,7 @@ public record DadosListEquipeRcd(
     public static DadosListEquipeRcd fromEntityAndMap(Equipe equipe, Map<Long, DadosPessoasfjReduzRcd> pessoasMap) {
         return new DadosListEquipeRcd(
                 equipe.getId(),
+                equipe.getEmpresa().getId(),
                 equipe.getEmpresa() != null ? equipe.getEmpresa().getRazaoSocial() : null,
                 pessoasMap.get(equipe.getAgremiacaoId()),
                 equipe.getNome(),

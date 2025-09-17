@@ -1,6 +1,7 @@
 package codiub.competicoes.api.repository.atleta;
 
 import codiub.competicoes.api.entity.*;
+import codiub.competicoes.api.entity.seguranca.Usuario_;
 import codiub.competicoes.api.filter.AtletaFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -59,6 +60,11 @@ public class AtletaRepositoryImpl implements AtletaRepositoryQuery {
         // ID
         if(atletaFilter.getId() != null) {
             predicates.add(builder.equal(root.get(Atleta_.ID), atletaFilter.getId()));
+        }
+
+        //EMPRESA
+        if(atletaFilter.getEmpresaId() != null) {
+            predicates.add(builder.equal(root.get(Atleta_.EMPRESA).get(Empresa_.ID), atletaFilter.getEmpresaId()));
         }
 
         // CATEGORIA DO ATLETA

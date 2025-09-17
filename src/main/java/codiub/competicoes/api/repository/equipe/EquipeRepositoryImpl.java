@@ -62,6 +62,11 @@ public class EquipeRepositoryImpl implements EquipeRepositoryQuery {
             predicates.add(builder.equal(root.get(Equipe_.empresa).get(Empresa_.ID), equipeFilter.getEmpresaFilter().getId()));
         }
 
+        //EMPRESA
+        if(equipeFilter.getEmpresaId() != null) {
+            predicates.add(builder.equal(root.get(Equipe_.EMPRESA).get(Empresa_.ID), equipeFilter.getEmpresaId()));
+        }
+
         // ID
         if(equipeFilter.getId() != null) {
             predicates.add(builder.equal(root.get(Equipe_.ID), equipeFilter.getId()));

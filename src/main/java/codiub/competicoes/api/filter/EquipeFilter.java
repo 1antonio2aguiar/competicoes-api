@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class EquipeFilter {
     private Long id;
+    private Long empresaId;
     private String nome;
     private String agremiacao;
     private String modalidade;
