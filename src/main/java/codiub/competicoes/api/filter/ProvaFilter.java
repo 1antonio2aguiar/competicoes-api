@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class ProvaFilter {
     private Long id;
+    private Long empresaId;
     private String tipoNado;
 
     private EtapaFilter etapaFilter = new EtapaFilter();

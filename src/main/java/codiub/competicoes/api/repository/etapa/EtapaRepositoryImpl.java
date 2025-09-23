@@ -1,8 +1,6 @@
 package codiub.competicoes.api.repository.etapa;
 
-import codiub.competicoes.api.entity.Campeonato_;
-import codiub.competicoes.api.entity.Etapa;
-import codiub.competicoes.api.entity.Etapa_;
+import codiub.competicoes.api.entity.*;
 import codiub.competicoes.api.filter.EtapaFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -62,6 +60,11 @@ public class EtapaRepositoryImpl implements EtapaRepositoryQuery {
         // ID DA ETAPA
         if(etapaFilter.getId() != null) {
             predicates.add(builder.equal(root.get(Etapa_.ID), etapaFilter.getId()));
+        }
+
+        //EMPRESA
+        if(etapaFilter.getEmpresaId() != null) {
+            predicates.add(builder.equal(root.get(Etapa_.EMPRESA).get(Empresa_.ID), etapaFilter.getEmpresaId()));
         }
 
         // ID DO CAMPEONATO

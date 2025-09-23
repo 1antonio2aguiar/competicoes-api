@@ -16,11 +16,12 @@ import java.util.Set;
 public interface AtletaRepository extends JpaRepository<Atleta, Long>, AtletaRepositoryQuery {
 
     @Query(
-            // CORRIGIDO: tabela 'atletas' e alias 'a' usado corretamente
-            value = "SELECT a.pessoa_id FROM atletas a WHERE a.pessoa_id IN :pessoaIds",
+            // Adicionado o filtro por empresa_id na query nativa
+            value = "SELECT a.pessoa_id FROM atletas a WHERE a.pessoa_id IN :pessoaIds AND a.empresa_id = :empresaId",
             nativeQuery = true
     )
-    List<Long> findPessoaIdsCadastradosComoAtletas(@Param("pessoaIds") Collection<Long> pessoaIds);
+    List<Long>
+    findPessoaIdsCadastradosComoAtletas(@Param("pessoaIds") Collection<Long> pessoaIds, @Param("empresaId") Long empresaId);
 
     Page<Atleta> filtrarComPessoaIds(AtletaFilter filter, Set<Long> pessoaIds, Pageable pageable);
 

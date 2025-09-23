@@ -1,8 +1,6 @@
 package codiub.competicoes.api.repository.campeonato;
 
-import codiub.competicoes.api.entity.Campeonato;
-import codiub.competicoes.api.entity.Campeonato_;
-import codiub.competicoes.api.entity.TiposModalidades;
+import codiub.competicoes.api.entity.*;
 import codiub.competicoes.api.filter.CampeonatoFilter;
 import codiub.competicoes.api.filter.TiposModalidadesFilter;
 import jakarta.persistence.EntityManager;
@@ -62,6 +60,11 @@ public class CampeonatoRepositoryImpl implements CampeonatoRepositoryQuery {
         // ID
         if(campeonatoFilter.getId() != null) {
             predicates.add(builder.equal(root.get(Campeonato_.ID), campeonatoFilter.getId()));
+        }
+
+        //EMPRESA
+        if(campeonatoFilter.getEmpresaId() != null) {
+            predicates.add(builder.equal(root.get(Equipe_.EMPRESA).get(Empresa_.ID), campeonatoFilter.getEmpresaId()));
         }
 
         // NOME

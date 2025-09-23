@@ -53,6 +53,7 @@ public class PessoasController {
             @RequestParam("termo") String termo,
             @RequestParam(value = "completo", required = false, defaultValue = "false") boolean completo
     ) {
+        System.err.println("Esta entando aqui " + termo);
         // Chama o método unificado do Feign Client, passando o parâmetro 'completo'
         ResponseEntity<List<?>> response = pessoaApiClient.pesquisarPorTermo(termo, completo);
 

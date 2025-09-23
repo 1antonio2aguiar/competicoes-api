@@ -61,15 +61,14 @@ public class AtletaService {
 
         // 1. A chamada fica limpa e direta
         Page<DadosPessoasReduzidoRcd> responseDaApi = pessoaApiClient.filtrarPessoasFisica(
-                filter.getId(),
-                filter.getNome(),
-                filter.getCpf(),
-                dataNascStr,
-                pageable
+            filter.getId(),
+            filter.getNome(),
+            filter.getCpf(),
+            dataNascStr,
+            pageable
         );
 
         Long empresaId = filter.getEmpresaId();
-        filter.setEmpresaId(empresaId);
 
         // 2. O restante do código funciona exatamente como antes
         List<DadosPessoasReduzidoRcd> candidatos = responseDaApi.getContent();
@@ -78,7 +77,7 @@ public class AtletaService {
         }
 
         List<Long> candidatoIds = candidatos.stream().map(DadosPessoasReduzidoRcd::id).collect(Collectors.toList());
-        List<Long> idsJaCadastrados = atletaRepository.findPessoaIdsCadastradosComoAtletas(candidatoIds);
+        List<Long> idsJaCadastrados = atletaRepository.findPessoaIdsCadastradosComoAtletas(candidatoIds, empresaId);
         List<DadosPessoasReduzidoRcd> pessoasDisponiveis = candidatos.stream()
                 .filter(candidato -> !idsJaCadastrados.contains(candidato.id()))
                 .collect(Collectors.toList());

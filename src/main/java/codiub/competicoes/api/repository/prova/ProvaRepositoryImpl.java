@@ -61,6 +61,11 @@ public class ProvaRepositoryImpl implements ProvaRepositoryQuery {
             predicates.add(builder.equal(root.get(Prova_.ID), provaFilter.getId()));
         }
 
+        //EMPRESA
+        if(provaFilter.getEmpresaId() != null) {
+            predicates.add(builder.equal(root.get(Etapa_.EMPRESA).get(Empresa_.ID), provaFilter.getEmpresaId()));
+        }
+
         // Filtra pelo ID do campeonato
         if(provaFilter.getEtapaFilter().getCampeonatoFilter().getId() != null) {
             predicates.add(builder.equal(root.get(Prova_.ETAPA).get(Etapa_.CAMPEONATO).get(Campeonato_.ID),

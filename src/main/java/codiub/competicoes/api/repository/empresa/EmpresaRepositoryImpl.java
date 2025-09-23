@@ -2,6 +2,7 @@ package codiub.competicoes.api.repository.empresa;
 
 import codiub.competicoes.api.entity.Empresa;
 import codiub.competicoes.api.entity.Empresa_;
+import codiub.competicoes.api.entity.Equipe_;
 import codiub.competicoes.api.filter.EmpresaFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

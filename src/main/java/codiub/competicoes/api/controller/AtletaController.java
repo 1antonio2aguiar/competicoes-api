@@ -40,6 +40,7 @@ public class AtletaController {
     ) {
         return atletaService.pesquisarPessoasDisponiveisParaAtleta(filter, pageable);
     }
+
     @GetMapping("/disponiveis-para-inscricao")
     public Page<DadosAtletasReduzidoRcd> pesquisarByAtleta(
             AtletaFilter filter,
