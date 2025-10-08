@@ -1,0 +1,39 @@
+# Estágio de build (para compilar a aplicação)
+FROM openjdk:17-alpine AS build
+
+COPY . /tmp/context
+RUN ls -l /tmp/context
+
+WORKDIR /app
+
+# Copia o mvnw e a pasta .mvn
+COPY mvnw .
+COPY .mvn .
+
+# Garante permissões de execução para o script mvnw
+RUN chmod +x mvnw
+
+
+# Adiciona um utilitário para converter quebras de linha (dos2unix)
+# Isso é crucial para scripts shell copiados do Windows para Linux.
+RUN apk add --no-cache dos2unix
+
+# Converte o script mvnw para o formato de linha Unix
+RUN dos2unix mvnw
+
+COPY pom.xml .
+# Copia o src depois para aproveitar o cache do Docker se as dependências não mudarem
+COPY src src
+
+# Para projetos Maven:
+#RUN ./mvnw clean package -DskipTests
+
+FROM openjdk:17-alpine
+
+WORKDIR /app
+
+ARG JAR_FILE=target/*.jar
+COPY --from=build ${JAR_FILE} app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

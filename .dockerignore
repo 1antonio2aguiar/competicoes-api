@@ -1,0 +1,43 @@
+# =========================
+# Maven
+# =========================
+target/                                 # Ignora builds do Maven
+.mvn/wrapper/maven-wrapper.jar          # Ignora binário do wrapper
+!/.mvn/wrapper/maven-wrapper.properties # Mantém o arquivo necessário para o wrapper
+
+# =========================
+# Gradle (se houver)
+# =========================
+build/
+.gradle/
+
+# =========================
+# IDE
+# =========================
+.idea/
+.vscode/
+*.iml
+
+# =========================
+# Sistema Operacional
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Git
+# =========================
+.git/
+.gitignore
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Arquivos temporários
+# =========================
+*.tmp
+*.swp

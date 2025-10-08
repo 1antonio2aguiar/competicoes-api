@@ -1,0 +1,89 @@
+
+# Estágio de build (para compilar a aplicação)
+FROM openjdk:17-alpine AS build
+
+WORKDIR /app
+
+# Copia o mvnw e a pasta .mvn
+COPY mvnw .
+COPY .mvn .
+
+# Garante permissões de execução para o script mvnw
+# RUN chmod +x mvnw
+
+
+# Adiciona um utilitário para converter quebras de linha (dos2unix)
+# Isso é crucial para scripts shell copiados do Windows para Linux.
+RUN apk add --no-cache dos2unix
+
+# Converte o script mvnw para o formato de linha Unix
+RUN dos2unix mvnw
+
+COPY pom.xml .
+# Copia o src depois para aproveitar o cache do Docker se as dependências não mudarem
+COPY src src
+
+# Para projetos Maven:
+RUN ./mvnw clean package -DskipTests
+
+FROM openjdk:17-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
+----------------------------------
+
+
+# Estágio de build (para compilar a aplicação)
+FROM openjdk:17-alpine AS build
+
+WORKDIR /app
+
+# Copia o mvnw e a pasta .mvn
+COPY mvnw .
+COPY .mvn .
+
+# Garante permissões de execução para o script mvnw
+# RUN chmod +x mvnw
+
+
+# Adiciona um utilitário para converter quebras de linha (dos2unix)
+# Isso é crucial para scripts shell copiados do Windows para Linux.
+RUN apk add --no-cache dos2unix
+
+# Converte o script mvnw para o formato de linha Unix
+RUN dos2unix mvnw
+
+COPY pom.xml .
+# Copia o src depois para aproveitar o cache do Docker se as dependências não mudarem
+COPY src src
+
+# Para projetos Maven:
+RUN ./mvnw clean package -DskipTests
+
+FROM openjdk:17-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+-------------------------------------------------------------------------------
+
+# Primeira fase, nomeada 'build'
+FROM openjdk:17-alpine AS build
+
+COPY . /app
+
+WORKDIR /app
+
+RUN mvn package -DskipTests
+
+# Segunda fase, usando uma imagem diferente
+FROM temurin:21-alpine
+
+COPY --from=build /app/target/competicoes-api-1.0.0.jar app.jar
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]
