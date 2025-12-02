@@ -1,11 +1,9 @@
-# ==========================
-# Estágio de build (compila a aplicação)
-# ==========================
-FROM openjdk:17-alpine AS build
+# === Etapa 1: Build com Maven Wrapper Competicoes-api ===
+FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /app
 
-# Copia o wrapper do Maven e a pasta .mvn (incluindo subpastas!)
+# Copia o wrapper do Maven e a pasta .mvn
 COPY mvnw .
 COPY .mvn .mvn
 
@@ -13,7 +11,7 @@ COPY .mvn .mvn
 RUN chmod +x mvnw
 
 # Instala utilitário dos2unix para conversão de scripts
-RUN apk add --no-cache dos2unix
+RUN apk add --no-cache dos2unix bash
 
 # Converte scripts e arquivos do wrapper para formato Unix
 RUN dos2unix mvnw
@@ -22,25 +20,19 @@ RUN dos2unix .mvn/wrapper/maven-wrapper.properties
 # Copia pom.xml primeiro (para aproveitar cache)
 COPY pom.xml .
 
-# Copia o código-fonte
+# Copia código-fonte
 COPY src src
 
-# Usa o wrapper do Maven para compilar (sem rodar testes)
-RUN ./mvnw package -DskipTests
+# Usa o wrapper do Maven para compilar sem rodar testes
+RUN ./mvnw package -DskipTests -Dproject.build.sourceEncoding=UTF-8
 
-# ==========================
-# Estágio de runtime (roda a aplicação)
-# ==========================
-FROM openjdk:17-alpine
+# === Etapa 2: Runtime ===
+FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 
-# Define onde está o .jar gerado
-ARG JAR_FILE=target/competicoes-api-1.0.0.jar
-
-# Copia o jar do estágio de build
-COPY --from=build /app/${JAR_FILE} app.jar
+# Copia o jar do estágio de build (agora com o nome correto)
+COPY --from=build /app/target/api-1.0.0.jar app.jar
 
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -6,6 +6,7 @@ import codiub.competicoes.api.DTO.pessoas.pessoa.PessoaJuridicaApiResponse;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
 import codiub.competicoes.api.client.PessoaApiClient;
+import codiub.competicoes.api.entity.pessoas.TiposPessoas;
 import codiub.competicoes.api.filter.pessoas.PessoaFilter;
 import codiub.competicoes.api.repository.InscricaoRepository;
 import codiub.competicoes.api.repository.pessoas.PessoasRepository;
@@ -102,6 +103,13 @@ public class PessoasController {
         pessoasService.delete(id);
         // Retorna 204 No Content, que é o padrão para um DELETE bem-sucedido.
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/tipos-pessoas")
+    public ResponseEntity<List<TiposPessoas>> listarTiposPessoas() {
+        List<TiposPessoas> tipos = pessoaApiClient.listarTiposPessoas();
+        System.err.println("passou aqui >>>>>>>>>>>>>>>>>>>>>>");
+        return ResponseEntity.ok(tipos);
     }
 }
 

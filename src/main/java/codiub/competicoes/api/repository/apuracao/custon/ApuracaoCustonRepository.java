@@ -85,11 +85,17 @@ public class ApuracaoCustonRepository {
         }
 
         query.unwrap(NativeQuery.class)
-                .setTupleTransformer((tuple, aliases) -> new DadosListApuracaoAndInscricaoRcd(
-                        (Long) tuple[0], (Long) tuple[1], (Long) tuple[2], (String) tuple[3],
-                        (Long) tuple[4], (Integer) tuple[5], (Integer) tuple[6], (Long) tuple[7],
-                        (Integer) tuple[8]
-                ));
+        .setTupleTransformer((tuple, aliases) -> new DadosListApuracaoAndInscricaoRcd(
+                (Long) tuple[0],                     // inscricaoId
+                (Long) tuple[1],                     // apuracaoId
+                (Long) tuple[2],                     // provaId
+                (String) tuple[3],                   // equipeNome
+                (Long) tuple[4],                     // atletaId
+                tuple[5] != null ? ((Number) tuple[5]).intValue() : null, // serie
+                tuple[6] != null ? ((Number) tuple[6]).intValue() : null, // baliza
+                tuple[7] != null ? ((Number) tuple[7]).longValue() : null, // resultado
+                tuple[8] != null ? ((Number) tuple[8]).intValue() : null   // tipoInscricao
+        ));
 
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
@@ -97,6 +103,7 @@ public class ApuracaoCustonRepository {
         List<DadosListApuracaoAndInscricaoRcd> resultados = query.getResultList();
         Long total = ((Number) countQuery.getSingleResult()).longValue();
 
+        System.err.println("voltando do apuracaoAndInscricao >>>>>>> " + filter);
         return new PageImpl<>(resultados, pageable, total);
     }
 }

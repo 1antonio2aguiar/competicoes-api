@@ -61,6 +61,7 @@ public class ApuracaoService {
     //Metodo filtrar
     @Transactional(readOnly = true) // Boa prática adicionar a anotação aqui
     public Page<DadosListApuracoesRcd> pesquisar(ApuracaoFilter filter, Pageable pageable) {
+
         // 1. Busca localmente a página de Apuracoes.
         Page<Apuracao> apuracaoPage = apuracaoRepository.filtrar(filter, pageable);
         List<Apuracao> apuracoesDaPagina = apuracaoPage.getContent();
@@ -248,8 +249,6 @@ public class ApuracaoService {
     //Insert
     public Apuracao insert(DadosInsertApuracoesRcd dados) {
 
-        System.err.println("CHEGOU NA BAGAÇA: " + dados.inscricaoId() + ". ATUALIZANDO...");
-
         // --- LÓGICA DE VERIFICAÇÃO ADICIONADA ---
         // 1. Verifica se já existe uma apuração para a inscrição fornecida.
         Optional<Apuracao> apuracaoExistenteOpt = apuracaoRepository.findByInscricaoId(dados.inscricaoId());
@@ -258,7 +257,7 @@ public class ApuracaoService {
 
         if (apuracaoExistenteOpt.isPresent()) {
             // 2. SE JÁ EXISTE: Vamos atualizar (UPDATE)
-            System.err.println("APURAÇÃO JÁ EXISTE PARA A INSCRIÇÃO ID: " + dados.inscricaoId() + ". ATUALIZANDO...");
+            //System.err.println("APURAÇÃO JÁ EXISTE PARA A INSCRIÇÃO ID: " + dados.inscricaoId() + ". ATUALIZANDO...");
             apuracao = apuracaoExistenteOpt.get();
 
             // Atualiza apenas os campos que podem mudar em uma re-apuração

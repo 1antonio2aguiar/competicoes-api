@@ -4,6 +4,7 @@ import codiub.competicoes.api.DTO.pessoas.DadosPessoasReduzidoRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoa.*;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasGeralRcd;
 import codiub.competicoes.api.DTO.pessoas.pessoasfj.DadosPessoasfjReduzRcd;
+import codiub.competicoes.api.entity.pessoas.TiposPessoas;
 import codiub.competicoes.api.entity.pessoas.pessoa.Pessoa;
 import codiub.competicoes.api.utils.PageableResponse;
 import jakarta.validation.Valid;
@@ -145,4 +146,6 @@ public interface PessoaApiClient {
     @DeleteMapping("/pessoa/{id}")
     ResponseEntity<Void> deletePessoa(@PathVariable("id") Long id);
 
+    @GetMapping("/tipoPessoa/list")
+    List<TiposPessoas> listarTiposPessoas();
 }

@@ -26,6 +26,20 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        System.out.println("[SecurityFilter] " + method + " " + path);
+
+        if (("POST".equals(method) && "/auth/login".equals(path))
+                || ("POST".equals(method) && "/usuarios".equals(path))) {
+            System.out.println("[SecurityFilter] bypass: " + method + " " + path);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         // 1. Recupera o token do cabeçalho da requisição
         var tokenJWT = recuperarToken(request);
 
@@ -52,8 +66,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                     // Tratar caso o usuário não tenha empresa (log ou erro)
                     System.err.println("Usuário " + usuarioAutenticado.getEmail() + " não possui empresa associada no SecurityFilter.");
                 }
-
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
