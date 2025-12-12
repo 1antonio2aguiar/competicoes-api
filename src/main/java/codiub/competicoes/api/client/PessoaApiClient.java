@@ -82,8 +82,8 @@ public interface PessoaApiClient {
     List<DadosPessoasReduzidoRcd> findPessoasFisicaByIds(@RequestParam("ids") Set<Long> ids);
 
     /* ESTA BUSCA É DIRETO NA PESSOAS-API (PRECISA TER UM END POINT NO CONTROLLER
-    * PARA ESTE CASO ELE CHAMA pesquisarPorNomeCpfCnpj NO PessoasController
-    * */
+     * PARA ESTE CASO ELE CHAMA pesquisarPorNomeCpfCnpj NO PessoasController
+     * */
     @GetMapping("/pessoa/pesquisar") // <<< Caminho para o endpoint unificado
     ResponseEntity<List<?>> pesquisarPorTermo(
             @RequestParam("termo") String termo,
@@ -111,7 +111,7 @@ public interface PessoaApiClient {
             @RequestParam(value = "sort", required = false) String[] sort
     );
 
-    @GetMapping("/pessoa/filtrar")
+    /*@GetMapping("/pessoa/filtrar")
     PageableResponse<DadosPessoasReduzidoRcd> filtrarPessoasFisica(
             // Parâmetros do PessoaFilter desmembrados
             @RequestParam(value = "id", required = false) Long id,
@@ -123,15 +123,15 @@ public interface PessoaApiClient {
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam(value = "sort", required = false) String[] sort
-    );
+    );*/
 
     @GetMapping("/pessoaFisica/filtrar")
     Page<DadosPessoasReduzidoRcd> filtrarPessoasFisica(
-        @RequestParam(value = "id", required = false) Long id,
-        @RequestParam(value = "nome", required = false) String nome,
-        @RequestParam(value = "cpf", required = false) String cpf,
-        @RequestParam(value = "dataNascimento", required = false) String dataNascimento,
-        Pageable pageable
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "cpf", required = false) String cpf,
+            @RequestParam(value = "dataNascimento", required = false) String dataNascimento,
+            Pageable pageable
     );
 
 
